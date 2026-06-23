@@ -3,6 +3,11 @@
 #
 # Pourquoi une Release et pas un zip dans le depot : le testeur telecharge UN SEUL fichier
 # (PressStart-<version>.zip) -> une seule extraction, et le numero de version est dans le nom.
+#
+# Option -Nettoyer : SUPPRIME toutes les autres Releases (ne garde que celle qu'on vient de
+# publier). A utiliser pour les builds BETA (licence) afin d'EVITER qu'un testeur recupere une
+# vieille version sans licence et contourne le systeme. (Publier-Beta.bat l'active.)
+param([switch]$Nettoyer)
 $ErrorActionPreference = "Stop"
 $here = $PSScriptRoot
 $repo = "Not-Nailec/Press-Start-Partage"
@@ -43,6 +48,16 @@ if($exists){
   gh release create $tag $zip --repo $repo --title "Press Start $ver" --notes "Version $ver. Telecharge PressStart-$ver.zip, debloque-le (clic droit > Proprietes > Debloquer) puis extrais et lance PressStart.exe."
 }
 if($LASTEXITCODE -ne 0){ Fail "La publication a echoue. Verifie ta connexion / 'gh auth login'." }
+
+# 4bis) Anti-bypass : ne garder QUE la version qu'on vient de publier (supprime les autres Releases)
+if($Nettoyer){
+  Write-Host "Nettoyage : suppression des autres Releases (anti-contournement)..."
+  $tags = (gh release list --repo $repo --limit 100 --json tagName --jq ".[].tagName") -split "`n" | Where-Object { $_ -and $_.Trim() -ne $tag }
+  foreach($t in $tags){
+    Write-Host "  - suppression $t"
+    gh release delete $t.Trim() --repo $repo --yes --cleanup-tag 2>$null
+  }
+}
 
 # 5) Mettre a jour VERSION.txt dans le depot (trace de la derniere version publiee)
 Set-Content -Path (Join-Path $here "VERSION.txt") -Value $ver -Encoding utf8
