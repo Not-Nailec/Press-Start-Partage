@@ -2,19 +2,18 @@
 
 Bienvenue 👋 — voici **Press Start**, l'outil de diagnostic, monitoring et optimisation de ton PC.
 
-## ⬇️ Installer / lancer
+## ⬇️ Télécharger / lancer
 
-1. En haut de cette page : bouton vert **`< > Code`** → **Download ZIP**
-   *(ou télécharge le fichier `PressStart-latest.zip`).*
-2. **AVANT d'extraire** : clic droit sur le `.zip` → **Propriétés** → coche **« Débloquer »** → **OK**.
-   *(Important : sinon Windows bloque le logiciel car il vient d'Internet.)*
-3. **Extrais** le `.zip` (clic droit → Extraire tout).
-4. Ouvre le dossier extrait → **double-clique `PressStart.exe`**.
+1. Va dans l'onglet **[Releases](../../releases)** (à droite de la page) → ouvre la dernière version.
+2. Sous **Assets**, télécharge le fichier **`PressStart-<version>.zip`**.
+3. **AVANT d'extraire** : clic droit sur le `.zip` → **Propriétés** → coche **« Débloquer »** → **OK**.
+4. **Extrais** le `.zip` puis double-clique **`PressStart.exe`**.
 
 > ⚠️ Windows (SmartScreen) ou l'antivirus peut afficher un avertissement car le logiciel
 > n'est **pas encore signé** : clique **« Informations complémentaires » → « Exécuter quand même »**.
 
-Version actuellement publiée : voir [`VERSION.txt`](VERSION.txt).
+Le **numéro de version est dans le nom du fichier** → facile de savoir laquelle tu as.
+Dernière version publiée : voir [`VERSION.txt`](VERSION.txt) ou la page Releases.
 
 ---
 
