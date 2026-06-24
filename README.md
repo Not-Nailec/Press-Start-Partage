@@ -17,4 +17,17 @@ Dernière version publiée : voir [`VERSION.txt`](VERSION.txt) ou la page Releas
 
 ---
 
-*Dépôt privé de distribution. Le code source n'est pas ici.*
+## 📜 Conditions d'utilisation
+
+En téléchargeant et en utilisant Press Start, tu acceptes les
+**[Conditions d'utilisation / Licence](CONDITIONS_UTILISATION.txt)**.
+
+Press Start est un **logiciel propriétaire — tous droits réservés**. Il est fourni
+**en version bêta, « en l'état », sans garantie** ; certaines fonctions agissent sur le
+matériel et le système (ventilation, BIOS/UEFI, registre, pilotes) et s'utilisent **à tes
+risques**. La copie, la redistribution, la revente et l'ingénierie inverse sont **interdites**.
+Le détail figure dans le fichier ci-dessus (également inclus dans le `.zip` téléchargé).
+
+---
+
+*Dépôt de distribution. Le code source n'est pas ici.*

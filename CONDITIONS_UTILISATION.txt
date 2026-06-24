@@ -1,0 +1,125 @@
+============================================================================
+        CONDITIONS D'UTILISATION ET LICENCE — PRESS START
+        (Contrat de Licence Utilisateur Final — « CLUF »)
+============================================================================
+
+Version 1.0 — juin 2026
+Éditeur : Célian Ruel (ci-après « l'Éditeur »)
+Contact : ruel.celian11@gmail.com
+
+----------------------------------------------------------------------------
+PRÉAMBULE / ACCEPTATION
+----------------------------------------------------------------------------
+En téléchargeant, installant, activant ou utilisant le logiciel Press Start
+(ci-après « le Logiciel »), vous (ci-après « l'Utilisateur ») reconnaissez avoir
+lu et accepté sans réserve l'intégralité du présent contrat. Si vous n'acceptez
+pas ces conditions, n'installez pas et n'utilisez pas le Logiciel, et supprimez-en
+toute copie en votre possession.
+
+----------------------------------------------------------------------------
+1. PROPRIÉTÉ INTELLECTUELLE
+----------------------------------------------------------------------------
+Le Logiciel, son code, son interface, son nom, son logo, ses graphismes et
+l'ensemble de ses contenus sont la propriété exclusive de l'Éditeur et sont
+protégés par le droit d'auteur et les traités internationaux applicables.
+TOUS DROITS RÉSERVÉS. Aucun droit de propriété n'est cédé à l'Utilisateur :
+seul un droit d'usage limité est concédé dans les conditions ci-dessous.
+
+----------------------------------------------------------------------------
+2. LICENCE CONCÉDÉE
+----------------------------------------------------------------------------
+L'Éditeur concède à l'Utilisateur une licence personnelle, non exclusive,
+non transférable, révocable et gratuite, strictement limitée à l'utilisation du
+Logiciel à des fins d'essai (version BÊTA) sur les équipements de l'Utilisateur.
+Cette licence peut être limitée dans le temps et/ou conditionnée par une clé
+d'activation nominative fournie par l'Éditeur.
+
+----------------------------------------------------------------------------
+3. RESTRICTIONS — CE QUI EST INTERDIT
+----------------------------------------------------------------------------
+Sauf accord écrit préalable de l'Éditeur, il est strictement interdit de :
+  - copier, distribuer, publier, partager, prêter, louer, revendre ou mettre à
+    la disposition de tiers le Logiciel ou toute clé d'activation ;
+  - décompiler, désassembler, pratiquer l'ingénierie inverse, extraire ou tenter
+    de reconstituer le code source du Logiciel ;
+  - contourner, désactiver ou altérer le système de licence/activation ou toute
+    mesure technique de protection ;
+  - modifier, adapter, traduire ou créer des œuvres dérivées du Logiciel ;
+  - retirer ou masquer les mentions de propriété, de droit d'auteur, ou le présent
+    contrat ;
+  - utiliser le Logiciel à des fins illégales ou contraires à l'ordre public.
+
+----------------------------------------------------------------------------
+4. LOGICIEL EN VERSION BÊTA
+----------------------------------------------------------------------------
+Le Logiciel est fourni en version de test (bêta). Il peut contenir des erreurs ou
+des dysfonctionnements, évoluer, être modifié, suspendu ou interrompu à tout moment
+sans préavis. Il n'est pas destiné à un usage professionnel, en production, ou dans
+un environnement critique.
+
+----------------------------------------------------------------------------
+5. ABSENCE DE GARANTIE
+----------------------------------------------------------------------------
+LE LOGICIEL EST FOURNI « EN L'ÉTAT » ET « SELON DISPONIBILITÉ », SANS AUCUNE
+GARANTIE D'AUCUNE SORTE, EXPRESSE OU IMPLICITE, NOTAMMENT — SANS QUE CETTE LISTE
+SOIT LIMITATIVE — DE QUALITÉ MARCHANDE, D'ADÉQUATION À UN USAGE PARTICULIER, OU
+D'ABSENCE D'ERREURS. L'Utilisateur utilise le Logiciel à ses entiers risques et
+périls.
+
+----------------------------------------------------------------------------
+6. LIMITATION DE RESPONSABILITÉ
+----------------------------------------------------------------------------
+Le Logiciel propose des fonctions susceptibles d'agir sur le matériel et le système
+(notamment : pilotage de la ventilation, profils de performance, modification de
+paramètres et du registre Windows, redémarrage vers le BIOS/UEFI, installation de
+pilotes ou de logiciels). L'Utilisateur reconnaît que ces opérations comportent des
+risques et qu'il les réalise sous sa seule et entière responsabilité.
+
+Dans toute la mesure permise par la loi applicable, l'Éditeur ne pourra être tenu
+responsable de tout dommage direct ou indirect (notamment : perte de données,
+dommage matériel, instabilité du système, perte d'exploitation ou perte de chance)
+résultant de l'utilisation ou de l'impossibilité d'utiliser le Logiciel. Il
+appartient à l'Utilisateur de sauvegarder ses données et de prendre toutes les
+précautions nécessaires avant toute opération sensible.
+
+----------------------------------------------------------------------------
+7. DONNÉES PERSONNELLES ET RAPPORTS DE BUG
+----------------------------------------------------------------------------
+La fonction de signalement de bug collecte des informations techniques sur la
+configuration matérielle et logicielle, ainsi qu'un journal de la session, dans le
+seul but de diagnostiquer et de corriger les anomalies. Ces données ne sont ni
+revendues ni cédées à des tiers à des fins commerciales. L'envoi d'un rapport est
+toujours à l'initiative de l'Utilisateur. Conformément à la réglementation
+applicable (notamment le RGPD), l'Utilisateur peut demander l'accès à ses données ou
+leur suppression à l'adresse de contact ci-dessus.
+
+----------------------------------------------------------------------------
+8. OUTILS ET COMPOSANTS TIERS
+----------------------------------------------------------------------------
+Le Logiciel peut utiliser ou s'appuyer sur des outils et composants tiers (par
+exemple : CPU-Z, GPU-Z, LibreHardwareMonitor, et autres). Ces outils demeurent
+soumis à leurs propres licences et droits respectifs ; l'Éditeur n'en revendique
+aucune propriété et n'en accorde aucune garantie.
+
+----------------------------------------------------------------------------
+9. RÉSILIATION
+----------------------------------------------------------------------------
+La présente licence prend fin automatiquement, sans préavis, en cas de
+non-respect de l'une quelconque de ses clauses, ou à l'expiration de la clé
+d'activation. À la résiliation, l'Utilisateur doit immédiatement cesser toute
+utilisation et supprimer toute copie du Logiciel.
+
+----------------------------------------------------------------------------
+10. DROIT APPLICABLE ET LITIGES
+----------------------------------------------------------------------------
+Le présent contrat est régi par le droit français. En cas de litige, et à défaut
+de résolution amiable, compétence est attribuée aux tribunaux français compétents.
+
+----------------------------------------------------------------------------
+11. CONTACT
+----------------------------------------------------------------------------
+Pour toute question relative au présent contrat : ruel.celian11@gmail.com
+
+============================================================================
+© 2026 Célian Ruel — Press Start. Tous droits réservés.
+============================================================================
