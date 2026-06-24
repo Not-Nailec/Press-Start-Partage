@@ -1,5 +1,12 @@
 # Press Start
 
+> # 🚨 NE TÉLÉCHARGE PAS le bouton vert « Code » !
+> Le bouton **« Code → Download ZIP »** te donne seulement cette page (README, licence…),
+> **PAS le logiciel**. L'application est dans l'onglet **[Releases](../../releases)**.
+>
+> 👉 **[CLIQUE ICI pour télécharger la dernière version](../../releases/latest)** → fichier
+> **`PressStart-<version>.zip`** sous **Assets**.
+
 Bienvenue 👋 — voici **Press Start**, l'outil de diagnostic, monitoring et optimisation de ton PC.
 
 ## ⬇️ Télécharger / lancer
