@@ -36,28 +36,36 @@ if(Test-Path $zip){ Remove-Item $zip -Force }
 Write-Host "Compression du build (peut prendre 30 s)..."
 Compress-Archive -Path $src -DestinationPath $zip -Force
 
-# 4) Publier en Release GitHub (tag = version). Si la release existe deja, on remplace l'asset.
+# 3bis) Notes de release = CHANGELOG de la version (source unique : app.js), via release_notes.py.
+$notesFile = Join-Path $env:TEMP "psnotes-$ver.md"
+$notesOk = $false
+$rn = Join-Path $here "..\Press Start\app\release_notes.py"
+if(Test-Path $rn){
+  try { py -3 $rn $ver $notesFile; if((Test-Path $notesFile) -and (Get-Item $notesFile).Length -gt 0){ $notesOk = $true } } catch {}
+}
+
+# 4) Publier en Release GitHub (tag = version). Si la release existe deja, on remplace l'asset + les notes.
 $tag = "v$ver"
 $exists = $false
 try { gh release view $tag --repo $repo *> $null; if($LASTEXITCODE -eq 0){ $exists = $true } } catch {}
 if($exists){
-  Write-Host "La release $tag existe deja -> mise a jour du fichier..."
+  Write-Host "La release $tag existe deja -> mise a jour du fichier + changelog..."
   gh release upload $tag $zip --repo $repo --clobber
+  if($notesOk){ gh release edit $tag --repo $repo --notes-file $notesFile }
 } else {
-  Write-Host "Creation de la release $tag..."
-  gh release create $tag $zip --repo $repo --title "Press Start $ver" --notes "Version $ver. Telecharge PressStart-$ver.zip, debloque-le (clic droit > Proprietes > Debloquer) puis extrais et lance PressStart.exe."
+  Write-Host "Creation de la release $tag (avec changelog)..."
+  if($notesOk){
+    gh release create $tag $zip --repo $repo --title "Press Start $ver" --notes-file $notesFile
+  } else {
+    gh release create $tag $zip --repo $repo --title "Press Start $ver" --notes "Version $ver. Telecharge PressStart-$ver.zip, debloque-le (clic droit > Proprietes > Debloquer) puis extrais et lance PressStart.exe."
+  }
 }
 if($LASTEXITCODE -ne 0){ Fail "La publication a echoue. Verifie ta connexion / 'gh auth login'." }
 
-# 4bis) Anti-bypass : ne garder QUE la version qu'on vient de publier (supprime les autres Releases)
-if($Nettoyer){
-  Write-Host "Nettoyage : suppression des autres Releases (anti-contournement)..."
-  $tags = (gh release list --repo $repo --limit 100 --json tagName --jq ".[].tagName") -split "`n" | Where-Object { $_ -and $_.Trim() -ne $tag }
-  foreach($t in $tags){
-    Write-Host "  - suppression $t"
-    gh release delete $t.Trim() --repo $repo --yes --cleanup-tag 2>$null
-  }
-}
+# 4bis) On NE SUPPRIME PLUS les anciennes releases : on GARDE tout l'historique des versions
+# (standard ; chaque build est de toute facon en mode beta = licence requise, donc pas de
+# contournement par une vieille version). Le parametre -Nettoyer est conserve mais NE FAIT RIEN.
+if($Nettoyer){ Write-Host "(-Nettoyer ignore : on conserve desormais toutes les releases.)" }
 
 # 5) Mettre a jour VERSION.txt dans le depot (trace de la derniere version publiee)
 Set-Content -Path (Join-Path $here "VERSION.txt") -Value $ver -Encoding utf8
