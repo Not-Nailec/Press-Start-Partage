@@ -15,6 +15,9 @@ Bienvenue 👋 — voici **Press Start**, l'outil de diagnostic, monitoring et o
 Le **numéro de version est dans le nom du fichier** → facile de savoir laquelle tu as.
 Dernière version publiée : voir [`VERSION.txt`](VERSION.txt) ou la page Releases.
 
+📦 **Archive des ressources (atelier)** : voir [`ARCHIVE_RESSOURCES.md`](ARCHIVE_RESSOURCES.md)
+(hébergée sur Google Drive — temporaire).
+
 ---
 
 ## 📜 Conditions d'utilisation
