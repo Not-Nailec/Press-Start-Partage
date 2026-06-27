@@ -15,14 +15,14 @@ $repo = "Not-Nailec/Press-Start-Partage"
 function Fail($msg){ Write-Host "`n[X] $msg" -ForegroundColor Red; Write-Host "Appuie sur une touche pour fermer."; [void][System.Console]::ReadKey($true); exit 1 }
 
 # 1) Localiser le build compile (depot principal = dossier voisin "Press Start")
-$src = Join-Path $here "..\Press Start\app\build\main.dist"
+$src = Join-Path $here "..\Press-Start\app\build\main.dist"
 if(-not (Test-Path $src)){
   Fail "Build introuvable :`n$src`n`nLance d'abord la compilation : dans 'Press Start\app', execute  py build.py"
 }
 
 # 2) Version depuis api.py
 $ver = "build"
-$apipy = Join-Path $here "..\Press Start\app\api.py"
+$apipy = Join-Path $here "..\Press-Start\app\api.py"
 if(Test-Path $apipy){
   $m = Select-String -Path $apipy -Pattern '"version":\s*"([^"]+)"' | Select-Object -First 1
   if($m){ $ver = $m.Matches.Groups[1].Value }
@@ -39,7 +39,7 @@ Compress-Archive -Path $src -DestinationPath $zip -Force
 # 3bis) Notes de release = CHANGELOG de la version (source unique : app.js), via release_notes.py.
 $notesFile = Join-Path $env:TEMP "psnotes-$ver.md"
 $notesOk = $false
-$rn = Join-Path $here "..\Press Start\app\release_notes.py"
+$rn = Join-Path $here "..\Press-Start\app\release_notes.py"
 if(Test-Path $rn){
   try { py -3 $rn $ver $notesFile; if((Test-Path $notesFile) -and (Get-Item $notesFile).Length -gt 0){ $notesOk = $true } } catch {}
 }
