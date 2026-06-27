@@ -7,6 +7,13 @@
 > 👉 **[CLIQUE ICI pour télécharger la dernière version](../../releases/latest)** → fichier
 > **`PressStart-<version>.zip`** sous **Assets**.
 
+> ## 🔑 Bêta-testeurs : vos anciennes licences ne fonctionnent plus
+> Suite à une **régénération de sécurité de la clé de signature**, **toutes les anciennes licences sont
+> devenues invalides**. Si Press Start affiche **« licence invalide »** ou vous demande une **activation**
+> au lancement, c'est normal : **demandez une nouvelle licence à Célian** (gratuite et rapide), par le
+> **même canal que vos rapports de bug**. Indiquez votre **nom** pour qu'il génère votre clé. Désolé pour
+> la gêne 🙏
+
 Bienvenue 👋 — voici **Press Start**, l'outil de diagnostic, monitoring et optimisation de ton PC.
 
 ## ⬇️ Télécharger / lancer
