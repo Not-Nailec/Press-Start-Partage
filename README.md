@@ -11,7 +11,7 @@
 > Suite à une **régénération de sécurité de la clé de signature**, **toutes les anciennes licences sont
 > devenues invalides**. Si Press Start affiche **« licence invalide »** ou vous demande une **activation**
 > au lancement, c'est normal : **demandez une nouvelle licence à Célian** (gratuite et rapide)
-> la gêne 🙏
+> désolé pour la gêne 🙏
 
 Bienvenue 👋 — voici **Press Start**, l'outil de diagnostic, monitoring et optimisation de ton PC.
 
