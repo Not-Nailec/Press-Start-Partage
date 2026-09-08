@@ -113,6 +113,13 @@ commentaires arrivent en direct, on peaufine, il valide. Ensuite seulement le co
 **Aucun visuel ne part au code sans être passé par un artefact commenté.** Ni un écran neuf, ni
 une retouche.
 
+**Un artefact est la page réelle, pas une image d'elle.** Célian doit pouvoir cliquer, taper,
+parcourir — une planche de captures ne montre qu'un état, jamais un comportement. Quand la page
+existe déjà, on l'assemble en un seul fichier (CSS et scripts en ligne, modules regroupés par
+esbuild, données de démonstration en mémoire) au lieu de la photographier. Ce qui ne peut pas
+tenir dans l'artefact — un vendor aux octets non-UTF-8, un CDN hors de la liste blanche, un
+téléchargement — se dit à Célian, jamais à l'écran.
+
 ### 5 · Un composant du design system
 
 Deux maquettes à chaque fois : `shape` pour les structures, puis la planche qui **mesure**, puis la
@@ -197,4 +204,4 @@ flou repart en `grill-with-docs`.
 - **Avant livraison d'un écran** : axe-core sans violation sérieuse, contraste ≥ 4,5:1 sous 18 px,
   clavier complet, console vide, aucun défilement horizontal, relecture anti-slop et ton.
 
-<!-- empreinte md5=d92ee816dd3e — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=d7d42e13cc8a — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
