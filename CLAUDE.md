@@ -14,12 +14,14 @@ disparaît à la diffusion suivante. Ce qui est propre à ce dépôt est dans `P
    n'est pas un contrôle. Hook, CI, ou les deux. *Corollaire :* **un garde-fou ne se coupe pas.**
 4. **Committer par chemins explicites.** Plusieurs discussions partagent l'index git d'un dépôt.
    Jamais `git add .` ni `git commit -a` : sinon on emporte le travail d'une autre session.
-5. **Ultra concis, partout, tout le temps.** Chat, plans, rapports, commentaires. Pas de
-   paragraphe de deux mille mots. Le résultat d'abord, le reste sur demande.
+5. **Trois phrases, pas plus.** Chat, plans, rapports. La réponse, et rien d'autre. Le
+   détail seulement si Célian le demande.
 
 ## Comment on se parle
 
-- **Ultra concis.** Une phrase de dix mots bat la même en trente. On est efficace.
+- **Trois phrases, pas plus.** Zéro préambule, zéro récapitulatif, zéro tableau non demandé.
+  Ce qui a marché en une ligne, ce qui reste en une ligne.
+- **Un long rendu se met dans un fichier ou un artefact**, jamais dans le chat.
 - **Les questions passent par `AskUserQuestion`, sans exception** — y compris dans un skill qui
   pose les siennes en texte (`grilling`, `to-spec`, `wizard`).
 - Un arbitrage par question, la recommandation en premier choix, marquée « (Recommandé) ».
@@ -204,4 +206,4 @@ flou repart en `grill-with-docs`.
 - **Avant livraison d'un écran** : axe-core sans violation sérieuse, contraste ≥ 4,5:1 sous 18 px,
   clavier complet, console vide, aucun défilement horizontal, relecture anti-slop et ton.
 
-<!-- empreinte md5=d7d42e13cc8a — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=988016e48f93 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
