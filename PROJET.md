@@ -35,3 +35,20 @@ vérifier `VERSION.txt` — c'est lui qui nomme la release.
 Le `README.md` s'adresse à des gens qui ne sont pas développeurs, sur un dépôt GitHub qu'ils ne
 savent pas lire. D'où l'avertissement sur le bouton vert « Code », et l'étape « Débloquer » avant
 d'extraire le zip : les deux viennent de vraies confusions de testeurs. Ne pas les alléger.
+
+## Agent skills
+
+Précondition des skills d'ingénierie de `outils/claude/`, posée le 15 septembre 2026.
+
+### Issue tracker
+
+GitHub Issues du dépôt, via `gh`. Voir `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Les cinq labels canoniques, à l'identique (`needs-triage`, `needs-info`, `ready-for-agent`,
+`ready-for-human`, `wontfix`), plus `wayfinder:*`. Voir `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Mono-contexte : `CONTEXT.md` à la racine, ADR dans `docs/adr/`. Voir `docs/agents/domain.md`.

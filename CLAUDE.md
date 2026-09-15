@@ -39,7 +39,10 @@ disparaît à la diffusion suivante. Ce qui est propre à ce dépôt est dans `P
 - **Une to-do par discussion.** Chaque discussion commence par sa liste de tâches — donnée par
   Célian, ou demandée par moi s'il ne l'a pas donnée. Sans objectif écrit, on ne commence pas.
 - **Jamais d'agents.** Pas de recherche multi-agents, aucun sous-agent lancé de ma propre
-  initiative. Seulement si Célian le demande.
+  initiative. Seulement si Célian le demande. **Une exception, chère et rare** : les agents que
+  `code-review` et `research` portent en eux ne tournent que pour un chantier de plusieurs
+  tickets — une grosse fonctionnalité neuve, une carte `wayfinder`. Un ticket seul se relit dans
+  le fil.
 - **Toutes les questions avant de toucher au code.** Petit pas par petit pas : un chantier, on
   valide, on continue.
 - **Terminé quand Célian a validé**, pas quand le code est écrit.
@@ -89,6 +92,12 @@ disparaît à la diffusion suivante. Ce qui est propre à ce dépôt est dans `P
 Dès qu'un skill correspond au travail en cours, l'invoquer plutôt que refaire la même chose à la
 main. L'environnement cloud Linux n'a aucun outil — le dire avant d'en proposer un.
 
+**La chaîne est celle de Matt Pocock, entière, dans tous les dépôts** (décision du 15 septembre
+2026). Un dépôt neuf commence par `setup-matt-pocock-skills` (tracker, labels, `docs/agents/`).
+Quand on ne sait plus quel skill convient, `ask-matt` est le routeur ; ses frontières de phase
+(`outils/claude/ask-matt/PHASE-BOUNDARIES.md`) disent quand continuer, `/clear`, `handoff` ou
+`/compact` — à une frontière, jamais en cours de phase.
+
 ### 1 · Démarrer une session
 
 Annoncer la machine et ce qu'elle peut exécuter · établir la to-do de la discussion · lire l'état
@@ -98,7 +107,20 @@ du dépôt. **Fini quand** l'objectif est écrit et que Célian sait où on en e
 
 `grill-with-docs` → `to-spec` → `to-tickets` → `implement` (avec `tdd`) → `code-review` → `/qa`
 si interface → `garde-fous-depot`. Un ticket déjà mesuré entre directement en `implement`.
+`grill-with-docs`, `to-spec` et `to-tickets` restent dans **une seule fenêtre de contexte** ;
+chaque `implement` repart à vide, `/clear` entre deux tickets. Une question qui a besoin de code
+pour être tranchée fait un détour par `prototype`, aller et retour par `handoff`.
+**Trop gros pour une session** — brouillard, plusieurs semaines, une refonte — : `wayfinder`
+d'abord. Il charte une carte de tickets de décision sur le tracker et les résout un par un ; quand
+la carte est claire, elle rejoint la chaîne à `to-spec`, jamais directement à `implement`.
 **Fini quand** Célian l'a validé sur la machine qui exécute.
+
+### 2 bis · Entretenir le code
+
+`improve-codebase-architecture` quand il y a un moment : il relève les modules à approfondir et
+chaque candidat retenu devient une idée pour `grill-with-docs`. `codebase-design` est le
+vocabulaire (module, interface, couture, adaptateur) sur lequel on le dessine. Un conflit git en
+cours se règle par `resolving-merge-conflicts`, par intention, jamais par `--abort`.
 
 ### 3 · Un bug
 
@@ -206,4 +228,4 @@ flou repart en `grill-with-docs`.
 - **Avant livraison d'un écran** : axe-core sans violation sérieuse, contraste ≥ 4,5:1 sous 18 px,
   clavier complet, console vide, aucun défilement horizontal, relecture anti-slop et ton.
 
-<!-- empreinte md5=988016e48f93 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=1405edd47ce2 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
