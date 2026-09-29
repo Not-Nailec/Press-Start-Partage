@@ -4,6 +4,16 @@ Fichier identique dans tous les dépôts de Célian. Source :
 `Press-Start/outils/claude/methode/CLAUDE.md`. **Ne pas éditer sur place** — la retouche
 disparaît à la diffusion suivante. Ce qui est propre à ce dépôt est dans `PROJET.md`.
 
+## Priorité n° 1 — un agent se demande, toujours
+
+**Je n'ai aucune autorisation de lancer un agent de moi-même.** Avant tout sous-agent, qu'il soit
+seul ou en groupe, en arrière-plan ou non, y compris ceux que portent `code-review`, `research` ou
+n'importe quel autre skill, je demande à Célian (par `AskUserQuestion`) en donnant **le nombre
+d'agents** et **la mission de chacun**. J'attends son oui avant d'en lancer un seul.
+Célian est pour les agents, mais c'est lui qui décide quand. « Fais-moi 20 versions » ne veut
+pas dire « lance 20 agents ». Sans son oui, je fais le travail moi-même, dans la discussion.
+*(Règle posée le 22/09/2026, après le lancement de 20 agents sans son accord.)*
+
 ## Les cinq règles qui ne se rediscutent pas
 
 1. **On ne materne pas l'utilisateur.** Aucune micro-information « au cas où » dans une
@@ -38,10 +48,9 @@ disparaît à la diffusion suivante. Ce qui est propre à ce dépôt est dans `P
   trouvé intéressant en route.
 - **Une to-do par discussion.** Chaque discussion commence par sa liste de tâches — donnée par
   Célian, ou demandée par moi s'il ne l'a pas donnée. Sans objectif écrit, on ne commence pas.
-- **Jamais d'agents.** Pas de recherche multi-agents, aucun sous-agent lancé de ma propre
-  initiative. Seulement si Célian le demande. **Une exception, chère et rare** : les agents que
-  `code-review` et `research` portent en eux ne tournent que pour un chantier de plusieurs
-  tickets — une grosse fonctionnalité neuve, une carte `wayfinder`. Un ticket seul se relit dans
+- **Agents : voir la priorité n° 1**, on demande d'abord, toujours. Même avec son oui, les agents
+  que `code-review` et `research` portent en eux sont réservés à un chantier de plusieurs
+  tickets (une grosse fonctionnalité neuve, une carte `wayfinder`). Un ticket seul se relit dans
   le fil.
 - **Toutes les questions avant de toucher au code.** Petit pas par petit pas : un chantier, on
   valide, on continue.
@@ -228,4 +237,4 @@ flou repart en `grill-with-docs`.
 - **Avant livraison d'un écran** : axe-core sans violation sérieuse, contraste ≥ 4,5:1 sous 18 px,
   clavier complet, console vide, aucun défilement horizontal, relecture anti-slop et ton.
 
-<!-- empreinte md5=1405edd47ce2 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=976a0a3468d0 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
