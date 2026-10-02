@@ -60,6 +60,8 @@ toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'o
 - **Agents : voir la priorité n° 1** et ses deux exceptions.
 - **Deux corrections ratées sur le même point : on repart à neuf**, même en cours de phase.
   `handoff` (ce qu'on a appris, ce qui a échoué), puis `/clear`, et la reprise part de la passation.
+- **Un seul gros changement en relecture à la fois.** Ce qui part en parallèle (recherche,
+  nettoyage) ne s'empile pas sur ce que Célian relit un par un (les écrans).
 - **Toutes les questions avant de toucher au code.** Petit pas par petit pas : un chantier, on
   valide, on continue.
 - **Terminé quand Célian a validé**, pas quand le code est écrit.
@@ -256,4 +258,4 @@ flou repart en `grill-with-docs`.
 - **Avant livraison d'un écran** : axe-core sans violation sérieuse, contraste ≥ 4,5:1 sous 18 px,
   clavier complet, console vide, aucun défilement horizontal, relecture anti-slop et ton.
 
-<!-- empreinte md5=de3b8dbe8ab8 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=21ecdb2e4420 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
