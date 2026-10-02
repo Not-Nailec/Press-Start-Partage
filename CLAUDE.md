@@ -122,6 +122,8 @@ toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'o
 - **Chaque tâche validée se pousse aussitôt** : la CI juge chaque changement, pas un paquet.
 - **Un `main` rouge s'annule** : si la correction ne tient pas en quelques minutes, `git revert`
   du commit fautif, puis on corrige à froid.
+- **Un lot sensible passe `/security-review` avant d'être poussé** : élévation, mise à jour, réseau,
+  pilotes, secrets. Ce qu'il relève se corrige ou s'écrit dans `docs/securite/MENACES.md`.
 
 ## Python et Node
 
@@ -217,4 +219,4 @@ traces peut n'en désigner que 2 de vraies.
 `triage`, puis les labels canoniques du dépôt. Un ticket mesuré part en `implement` ; un besoin
 flou repart en `grill-with-docs`.
 
-<!-- empreinte md5=71813288cb0f — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=0a0e2bca3e4d — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
