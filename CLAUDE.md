@@ -4,20 +4,30 @@ Fichier identique dans tous les dépôts de Célian. Source :
 `Press-Start/outils/claude/methode/CLAUDE.md`. **Ne pas éditer sur place** — la retouche
 disparaît à la diffusion suivante. Ce qui est propre à ce dépôt est dans `PROJET.md`.
 
+**Avant d'écrire, de modifier ou de relire une interface** (écran, composant, maquette, artefact,
+image) : lire `CLAUDE-INTERFACE.md`, à côté de ce fichier. Il porte les règles d'interface et la
+chaîne de toute création visuelle.
+
 ## Priorité n° 1 — un agent se demande, toujours
 
 **Je n'ai aucune autorisation de lancer un agent de moi-même.** Avant tout sous-agent, qu'il soit
 seul ou en groupe, en arrière-plan ou non, y compris ceux que portent `code-review`, `research` ou
 n'importe quel autre skill, je demande à Célian (par `AskUserQuestion`) en donnant **le nombre
 d'agents** et **la mission de chacun**. J'attends son oui avant d'en lancer un seul.
-Célian est pour les agents, mais c'est lui qui décide quand. « Fais-moi 20 versions » ne veut
-pas dire « lance 20 agents ». Sans son oui, je fais le travail moi-même, dans la discussion.
-*(Règle posée le 22/09/2026, après le lancement de 20 agents sans son accord.)*
+« Fais-moi 20 versions » ne veut pas dire « lance 20 agents ». Sans son oui, je fais le travail
+moi-même, dans la discussion. *(Règle posée le 22/09/2026, après 20 agents lancés sans son accord.)*
 
-**Deux exceptions, déjà accordées** (votes du 02/10/2026) :
+**Trois exceptions, déjà accordées** (votes des 02 et 03/10/2026) :
 - les 2 agents de `code-review` (Standards, Spec) partent d'eux-mêmes à la fin de chaque ticket ;
 - une tâche planifiée que Célian a validée à sa création (`cleanup` hebdomadaire, agents du soir)
   tourne sans qu'on lui redemande. Elle ne pousse rien et ne touche pas à `main`.
+- avant chaque validation d'écran, des agents-testeurs aux profils différents (technicien, client
+  novice, joueur) font le parcours et rapportent où ils bloquent (vote 1-utilisateurs, 03/10/2026).
+
+**Chaque agent part avec un modèle choisi selon sa tâche**, annoncé en le présentant : `haiku`
+pour chercher, lire, inventorier ; `sonnet` pour exécuter un ticket clair, des tests, des scripts ;
+`opus` pour concevoir, relire, déboguer, la méthode. `fable` seulement si Célian l'accepte. Le hook
+`garde-agents` refuse un agent sans modèle, et Fable sans son accord.
 
 **Les pratiques votées sur la planche `workflow`** (`docs/recherche/workflow/lots.md`) priment sur
 toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'on réécrit.
@@ -25,29 +35,29 @@ toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'o
 ## Les cinq règles qui ne se rediscutent pas
 
 1. **On ne materne pas l'utilisateur.** Aucune micro-information « au cas où » dans une
-   interface. C'est du remplissage, et ça fait amateur.
+   interface : c'est du remplissage.
 2. **Corriger le système, pas l'écran.** Un écran qui contourne un composant révèle un manque du
    composant. On corrige le composant une fois.
 3. **Automatiser, jamais à la demande.** Un contrôle qui dépend de quelqu'un qui pense à le lancer
    n'est pas un contrôle. Hook, CI, ou les deux. *Corollaire :* **un garde-fou ne se coupe pas.**
+   Une erreur d'agent vue deux fois devient un test, un hook ou une règle datée, jamais une
+   consigne de plus en prose.
 4. **Committer par chemins explicites.** Chaque session parallèle travaille dans son propre
    worktree ; les chemins nommés restent le filet si deux sessions partagent quand même un index.
    Jamais `git add .` ni `git commit -a` : sinon on emporte le travail d'une autre session.
-5. **Trois phrases, pas plus.** Chat, plans, rapports. La réponse, et rien d'autre. Le
-   détail seulement si Célian le demande.
+5. **Trois phrases, pas plus.** Chat, plans, rapports : la réponse, sans préambule, sans
+   récapitulatif, sans tableau non demandé. Ce qui a marché en une ligne, ce qui reste en une
+   ligne. Le détail seulement si Célian le demande.
 
 ## Comment on se parle
 
-- **Trois phrases, pas plus.** Zéro préambule, zéro récapitulatif, zéro tableau non demandé.
-  Ce qui a marché en une ligne, ce qui reste en une ligne.
 - **Un long rendu se met dans un fichier ou un artefact**, jamais dans le chat.
 - **Les questions passent par `AskUserQuestion`, sans exception** — y compris dans un skill qui
-  pose les siennes en texte (`grilling`, `to-spec`, `wizard`).
-- Un arbitrage par question, la recommandation en premier choix, marquée « (Recommandé) ».
-  Au-delà de quatre : plusieurs appels d'affilée, aucune sacrifiée.
-- **Une question sur une planche reprend les marques de la planche.** L'intitulé nomme la section
-  telle qu'elle est numérotée à l'écran, chaque option commence par la lettre ou le numéro que la
-  page imprime.
+  pose les siennes en texte (`grilling`, `to-spec`, `wizard`). Un arbitrage par question, la
+  recommandation en premier choix, marquée « (Recommandé) ». Au-delà de quatre : plusieurs appels
+  d'affilée, aucune sacrifiée.
+- **Une question sur une planche reprend les marques de la planche** : l'intitulé nomme la section
+  telle qu'elle est numérotée à l'écran, chaque option commence par la lettre ou le numéro imprimé.
 - **Les réserves se disent à Célian, jamais à l'écran de l'outil.**
 
 ## Comment on travaille
@@ -55,18 +65,17 @@ toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'o
 - **Célian pilote, j'exécute.** Il donne le travail, il prend les décisions, j'applique. Je fais
   tout ce qui peut être fait à sa place. Le travail répond à l'objectif fixé, pas à ce que j'aurais
   trouvé intéressant en route.
-- **Une to-do par discussion.** Chaque discussion commence par sa liste de tâches — donnée par
-  Célian, ou demandée par moi s'il ne l'a pas donnée. Sans objectif écrit, on ne commence pas.
-- **Agents : voir la priorité n° 1** et ses deux exceptions.
+- **Une to-do par discussion**, donnée par Célian ou demandée par moi. Sans objectif écrit, on ne
+  commence pas.
+- **Toutes les questions avant de toucher au code.** Petit pas par petit pas : un chantier, on
+  valide, on continue. **Terminé quand Célian a validé**, pas quand le code est écrit.
 - **Deux corrections ratées sur le même point : on repart à neuf**, même en cours de phase.
   `handoff` (ce qu'on a appris, ce qui a échoué), puis `/clear`, et la reprise part de la passation.
 - **Un seul gros changement en relecture à la fois.** Ce qui part en parallèle (recherche,
   nettoyage) ne s'empile pas sur ce que Célian relit un par un (les écrans).
-- **Toutes les questions avant de toucher au code.** Petit pas par petit pas : un chantier, on
-  valide, on continue.
-- **Terminé quand Célian a validé**, pas quand le code est écrit.
 - **Un résultat se constate, il ne se simule pas.** Ce qui n'a pas tourné se dit « écrit, non
-  exécuté ». Une machine qui ne peut pas exécuter le dit avant qu'on propose un outil.
+  exécuté », et un contrôle qui sort « non exécuté » n'est pas un succès. Une machine qui ne peut
+  pas exécuter le dit avant qu'on propose un outil : l'environnement cloud Linux n'en a aucun.
 - **Ce qui se mesure ne se déduit pas.** Un ratio, un compte, l'effet d'une cascade CSS : on le
   mesure dans les conditions réelles. Une valeur calculée de tête a déjà déclaré conforme le seul
   cas qui échouait.
@@ -80,6 +89,20 @@ toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'o
 - **Un réglage qui ne change plus rien se retire**, et les appels qui s'en servaient avec.
 - **Les coutures de test se proposent ticket par ticket**, jamais d'avance.
 - **Ce qui est interdit est absent, pas grisé.**
+
+## Rythme
+
+- **Deux chantiers ouverts au plus.** Un chantier est une issue au label `chantier`, ou une carte
+  `wayfinder:map`. On en finit un avant d'en ouvrir un troisième ; le hook de début de session
+  signale le dépassement.
+- **Un budget de dette visible, environ 20 %.** À peu près un ticket sur cinq remet en ordre
+  (refactor, tests, nettoyage) au lieu d'ajouter ; il se mesure avec `--dette`, et
+  `node ~/.claude/mesure-ticket.mjs --bilan` donne la part des 28 derniers jours. Un écart net se
+  dit à Célian.
+- **Des cycles à appétit fixe.** Quelques semaines de chantier, dont Célian fixe la durée à
+  l'ouverture, puis quelques jours de rangement : dette, finitions, `cleanup`, passations
+  archivées. Le cycle en cours et sa date de fin s'écrivent en tête de l'état du dépôt
+  (`docs/ETAT.md` ou son équivalent) ; une fois la date passée, on range avant d'ouvrir.
 
 ## Vérité des données
 
@@ -95,7 +118,6 @@ toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'o
 - **Avant chaque commit** : relire `git diff --cached --name-only`, puis `garde-fous-depot`. Avant
   le commit, pas avant le push : un secret entré dans l'historique local ne s'en retire plus.
 - **Ne stager que du code source** : aucun secret, aucun binaire, aucun fichier de données.
-- Nommer les chemins, jamais l'index entier.
 - **Un commit = une chose.** Message en français : ce qui change, puis pourquoi.
 - **Chaque tâche validée se pousse aussitôt** : la CI juge chaque changement, pas un paquet.
 - **Un `main` rouge s'annule** : si la correction ne tient pas en quelques minutes, `git revert`
@@ -108,12 +130,16 @@ toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'o
 - Node pour les outils de dépôt, sans dépendance quand c'est possible.
 - **Tout tourne à l'identique sur le Mac et sur la station Windows.** Un script en shell ne tient
   pas cette promesse.
-- **Jev (TypeSafe) pour juger du texte** : classer, rapprocher, trier, en `uv run` avec `typesafe-sdk` (`Choice` + critères, seuil 0,6, « — » sous le seuil). Le code garde les relevés, comptes et calculs. Aucune donnée client sans accord. Clé dans `~/.config/typesafe/cle`, jamais dans l'environnement global : on lance par `node ~/.claude/jev.mjs <commande>`.
+- **Jev (TypeSafe) pour juger du texte** (classer, rapprocher, trier) : `uv run` avec
+  `typesafe-sdk`, `Choice` + critères, seuil 0,6, « — » sous le seuil. Le code garde les relevés,
+  comptes et calculs. Aucune donnée client sans accord. On lance par
+  `node ~/.claude/jev.mjs <commande>` : la clé reste dans `~/.config/typesafe/cle`, jamais dans
+  l'environnement global.
 
 # Comment on fait chaque chose
 
 Dès qu'un skill correspond au travail en cours, l'invoquer plutôt que refaire la même chose à la
-main. L'environnement cloud Linux n'a aucun outil — le dire avant d'en proposer un.
+main.
 
 **La chaîne est celle de Matt Pocock, entière, dans tous les dépôts** (décision du 15 septembre
 2026). Un dépôt neuf commence par `setup-matt-pocock-skills` (tracker, labels, `docs/agents/`).
@@ -123,9 +149,14 @@ Quand on ne sait plus quel skill convient, `ask-matt` est le routeur ; ses front
 
 ### 1 · Démarrer une session
 
-Annoncer la machine et ce qu'elle peut exécuter · `git pull --rebase` (l'autre machine a peut-être
-poussé) · un test de bout en bout qui passe · établir la to-do de la discussion. **Fini quand**
-l'objectif est écrit et que Célian sait où on en est en trois lignes.
+Le hook de début de session fait le `git pull --rebase` quand l'arbre est propre (l'autre machine a
+peut-être poussé) et signale ce qui bloque : ce qu'il écrit se traite avant tout le reste. Puis :
+annoncer la machine et ce qu'elle peut exécuter · un test de bout en bout qui passe (la commande
+rapide écrite dans le `PROJET.md` du dépôt) · établir la to-do de la discussion. **Fini quand**
+l'objectif est écrit et que Célian sait où on en est en trois lignes. Une passation reprise part
+dans `docs/archives/handoffs/` (`git mv`) : `docs/` ne garde que celle qui attend sa reprise.
+Les PR Dependabot dont la CI est verte se fusionnent en début de session ; seules les rouges vont à
+Célian.
 
 ### 2 · Un chantier complet
 
@@ -133,14 +164,18 @@ l'objectif est écrit et que Célian sait où on en est en trois lignes.
 si interface → `garde-fous-depot` → push. Un ticket déjà mesuré entre directement en `implement`.
 `code-review` part de lui-même à la fin de chaque ticket, et ne relève que trois choses : un bug,
 une règle écrite violée, un écart à la spec. Jamais une question de goût. Un ticket = un changement
-qu'on peut relire.
+qu'on peut relire. La spec commence par le texte côté client (note de version ou aide), puis son
+appétit, son hors-périmètre et son disjoncteur : disjoncteur déclenché, on s'arrête et on remet en
+forme, on ne prolonge pas.
 `grill-with-docs`, `to-spec` et `to-tickets` restent dans **une seule fenêtre de contexte** ;
 chaque `implement` repart à vide, `/clear` entre deux tickets. Une question qui a besoin de code
 pour être tranchée fait un détour par `prototype`, aller et retour par `handoff`.
 **Trop gros pour une session** — brouillard, plusieurs semaines, une refonte — : `wayfinder`
 d'abord. Il charte une carte de tickets de décision sur le tracker et les résout un par un ; quand
 la carte est claire, elle rejoint la chaîne à `to-spec`, jamais directement à `implement`.
-**Fini quand** Célian l'a validé sur la machine qui exécute.
+**Fini quand** Célian l'a validé sur la machine qui exécute. Le ticket validé, avant `/clear` :
+`node ~/.claude/mesure-ticket.mjs "#<n> <titre>"` (`--dette` pour un ticket de dette) ajoute sa
+ligne mesurée à `docs/mesures/journal.md`.
 
 ### 2 bis · Entretenir le code
 
@@ -152,110 +187,34 @@ cours se règle par `resolving-merge-conflicts`, par intention, jamais par `--ab
 ### 3 · Un bug
 
 `diagnosing-bugs`. La cause d'abord. Puis ce qui l'empêche de revenir : un test, un garde-fou, ou
-le composant corrigé. **Fini quand** la cause est écrite et le statut posé.
+le composant corrigé. **Fini quand** la cause est écrite et le statut posé. Un bug qui remonte à un
+ticket mesuré : +1 dans sa colonne « Bugs après coup » du journal de mesure.
 
-### 4 · Un écran, une retouche, toute création visuelle
+### 4 · Un écran, un composant, une retouche, toute création visuelle
 
-`impeccable shape` → **l'artefact commentable sur claude.ai** : Célian commente dessus, les
-commentaires arrivent en direct, on peaufine, il valide. Ensuite seulement le code, en copiant un
-écran voisin déjà validé. Puis `audit`, `polish`, `/qa`. L'artefact s'ouvre sur sa critique
-cadrée, au-dessus de la maquette et jamais dedans : ce qu'il faut trancher, et ce sur quoi on ne
-demande pas d'avis.
-**Fini quand** axe-core est propre, la console vide, et Célian a validé le rendu.
+La chaîne est dans `CLAUDE-INTERFACE.md`. **Aucun visuel ne part au code sans être passé par un
+artefact commenté** par Célian, ni un écran neuf, ni une retouche.
 
-**Aucun visuel ne part au code sans être passé par un artefact commenté.** Ni un écran neuf, ni
-une retouche.
-
-**Un artefact est la page réelle, pas une image d'elle.** Célian doit pouvoir cliquer, taper,
-parcourir — une planche de captures ne montre qu'un état, jamais un comportement. Quand la page
-existe déjà, on l'assemble en un seul fichier (CSS et scripts en ligne, modules regroupés par
-esbuild, données de démonstration en mémoire) au lieu de la photographier. Ce qui ne peut pas
-tenir dans l'artefact — un vendor aux octets non-UTF-8, un CDN hors de la liste blanche, un
-téléchargement — se dit à Célian, jamais à l'écran.
-
-### 5 · Un composant du design system
-
-Deux maquettes à chaque fois : `shape` pour les structures, puis la planche qui **mesure**, puis la
-carte de décision. Ensuite le code, source et bundle ensemble. `document` régénère `DESIGN.md`.
-
-### 6 · Une image, une vidéo, un PDF
+### 5 · Une image, une vidéo, un PDF
 
 Les skills dédiés. **Piège payé : une capture ne prouve rien toute seule.** Elle montre un état,
 jamais un comportement — un anneau figé et un anneau qui respire donnent la même image. La capture
 de référence d'une page `?demo` attrape une régression d'affichage ; le comportement, lui, se teste.
 
-### 7 · Avant un commit
-
-Le diff, le garde-fou, les chemins nommés. **Un contrôle qui sort « non exécuté » n'est pas un
-succès.**
-
-### 8 · Fin de session
+### 6 · Fin de session
 
 `cleanup` · `handoff` si ça reprend ailleurs · corriger l'état du dépôt · le manifeste de
 vérification en trois colonnes : testé réellement · seulement relu · invérifiable ici, et pourquoi.
 
-### 9 · Une question de doc
+### 7 · Une question de doc
 
-`context7` avant d'écrire du code qui l'utilise, `research` si ça mérite un fichier.
+`context7` avant d'écrire du code qui utilise une bibliothèque, `research` si ça mérite un fichier.
 **Piège payé : une signature compte ce qu'elle cherche, jamais ce que ça veut dire.** Un grep à 19
 traces peut n'en désigner que 2 de vraies.
 
-### 10 · Une issue à trier
+### 8 · Une issue à trier
 
 `triage`, puis les labels canoniques du dépôt. Un ticket mesuré part en `implement` ; un besoin
 flou repart en `grill-with-docs`.
 
-# Règles d'interface
-
-- **Composants du DS avant tout.** Les tokens exacts, jamais une couleur, un rayon ou une ombre
-  inventés. Thème clair par défaut, sombre via `[data-theme="dark"]`, un seul accent posé sur un
-  élément interne — jamais écrit sur `document.documentElement` depuis la logique.
-- **Trois encres** : `--text-1` la valeur, `--text-2` le libellé, `--text-3` le détail seul. La
-  couleur sémantique porte un objet, jamais un libellé. Un texte qui porte une donnée, un repérage
-  ou un nom de colonne **n'est pas du détail** : il va en `--text-2`.
-- **On ne badge que l'exception.** Un résultat anormal porte un badge ; ce qui va bien est du texte
-  `--text-2` ; ce qui n'a pas eu lieu est du texte en retrait `--text-3`. Une étiquette neutre est
-  un `Tag`.
-- **Les deux silences ne sont pas le même silence** : « va bien » ≠ « n'a pas eu lieu ». Les
-  confondre masque un trou d'information derrière une fausse assurance.
-- **Une progression n'est pas un verdict.** L'étape franchie est en `--border-strong` plein, pas en
-  succès : elle dit « c'est derrière toi », pas « tout va bien ».
-- **Zéro conseil à l'écran.** Autorisé : titre, libellé court, donnée réelle avec son unité, « — ».
-  Une limite technique se corrige ou se tait. Le logiciel fait, il n'explique pas.
-- **L'infobulle est la seule place autorisée** pour un conseil ou une explication. Au survol, une
-  par carte, sur la ligne de titre. Hors infobulle, la phrase n'existe pas.
-- **Ne jamais dire deux fois la même chose.** Une infobulle qui explique pourquoi une mesure manque
-  reste interdite : le tiret l'a déjà dit.
-- **Donnée absente → le tiret `—`, et rien d'autre.** Jamais une valeur plausible, jamais l'absence
-  dite deux fois.
-- **Le tiret cadratin ne dit que l'absence.** Dans une phrase il devient `·` (deux faits), `:` (une
-  précision), `.` (deux idées) — ou rien, si c'est notre limite qu'il expliquait.
-- **Aucune notification, aucun toast, aucun bandeau.** Par défaut il n'y en a pas ; s'il en faut un
-  quelque part, Célian le demande.
-- **Le retour se lit là où l'action a eu lieu** : la ligne montre sa nouvelle valeur, le bouton dit
-  ce qu'il a fait. Un échec s'affiche en ligne, à côté, et reste jusqu'à traitement.
-- **Tout bouton a son état d'attente.** N'importe quelle commande dont l'action peut durer montre
-  qu'elle travaille — sans exception, quel que soit le bouton. **Et c'est l'application qui le
-  décide seule** : elle mesure que l'action dure et affiche le chargement d'elle-même. Ce n'est
-  jamais au développeur de deviner, bouton par bouton, ce qui sera lent.
-- **Panneaux en ligne plutôt que modales.** Confirmation sensible à la place du déclencheur :
-  `--warning-soft` si réversible, `--critical-border` si destructif.
-- **Zéro modale, et plus de composant du tout.** `Modal` et `FloatingPanel` ont été supprimés : la
-  règle est tenue par l'absence, pas par la discipline.
-- **Forme** : deux rayons (6 px contrôle, 10 px surface), zéro pilule décorative, icône trait 1,5
-  en `--text-3` qui désigne sans décorer, bouton primaire en accent sans ombre colorée, en-tête de
-  section en overline.
-- **Un popover est une surface** — rayon 10, ombre `--shadow-3`, bordure. `Menu` et `Dropdown`
-  partagent ce chrome et se modifient ensemble. Une boîte écrite à la main est une faute.
-- **Typo** : `font:` en raccourci avec `var(--font-sans)`, jamais `font-family` seul.
-  `tabular-nums` sur toute valeur.
-- **Mouvement** : 150 à 300 ms `ease-out`, `prefers-reduced-motion` respecté. Une animation dit un
-  état, jamais une valeur.
-- **Une carte a une seule colonne de texte.** Une icône en tête pousse la première ligne, jamais
-  les suivantes. Une donnée ne s'écrit qu'une fois.
-- **Rendre, ne pas muter** : thème, accent, matière et mouvement réduit sont des valeurs de rendu
-  posées sur un élément interne.
-- **Avant livraison d'un écran** : axe-core sans violation sérieuse, contraste ≥ 4,5:1 sous 18 px,
-  clavier complet, console vide, aucun défilement horizontal, relecture anti-slop et ton.
-
-<!-- empreinte md5=21ecdb2e4420 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=71813288cb0f — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
