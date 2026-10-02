@@ -14,6 +14,14 @@ Célian est pour les agents, mais c'est lui qui décide quand. « Fais-moi 20 ve
 pas dire « lance 20 agents ». Sans son oui, je fais le travail moi-même, dans la discussion.
 *(Règle posée le 22/09/2026, après le lancement de 20 agents sans son accord.)*
 
+**Deux exceptions, déjà accordées** (votes du 02/10/2026) :
+- les 2 agents de `code-review` (Standards, Spec) partent d'eux-mêmes à la fin de chaque ticket ;
+- une tâche planifiée que Célian a validée à sa création (`cleanup` hebdomadaire, agents du soir)
+  tourne sans qu'on lui redemande. Elle ne pousse rien et ne touche pas à `main`.
+
+**Les pratiques votées sur la planche `workflow`** (`docs/recherche/workflow/lots.md`) priment sur
+toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'on réécrit.
+
 ## Les cinq règles qui ne se rediscutent pas
 
 1. **On ne materne pas l'utilisateur.** Aucune micro-information « au cas où » dans une
@@ -22,7 +30,8 @@ pas dire « lance 20 agents ». Sans son oui, je fais le travail moi-même, dans
    composant. On corrige le composant une fois.
 3. **Automatiser, jamais à la demande.** Un contrôle qui dépend de quelqu'un qui pense à le lancer
    n'est pas un contrôle. Hook, CI, ou les deux. *Corollaire :* **un garde-fou ne se coupe pas.**
-4. **Committer par chemins explicites.** Plusieurs discussions partagent l'index git d'un dépôt.
+4. **Committer par chemins explicites.** Chaque session parallèle travaille dans son propre
+   worktree ; les chemins nommés restent le filet si deux sessions partagent quand même un index.
    Jamais `git add .` ni `git commit -a` : sinon on emporte le travail d'une autre session.
 5. **Trois phrases, pas plus.** Chat, plans, rapports. La réponse, et rien d'autre. Le
    détail seulement si Célian le demande.
@@ -48,10 +57,9 @@ pas dire « lance 20 agents ». Sans son oui, je fais le travail moi-même, dans
   trouvé intéressant en route.
 - **Une to-do par discussion.** Chaque discussion commence par sa liste de tâches — donnée par
   Célian, ou demandée par moi s'il ne l'a pas donnée. Sans objectif écrit, on ne commence pas.
-- **Agents : voir la priorité n° 1**, on demande d'abord, toujours. Même avec son oui, les agents
-  que `code-review` et `research` portent en eux sont réservés à un chantier de plusieurs
-  tickets (une grosse fonctionnalité neuve, une carte `wayfinder`). Un ticket seul se relit dans
-  le fil.
+- **Agents : voir la priorité n° 1** et ses deux exceptions.
+- **Deux corrections ratées sur le même point : on repart à neuf**, même en cours de phase.
+  `handoff` (ce qu'on a appris, ce qui a échoué), puis `/clear`, et la reprise part de la passation.
 - **Toutes les questions avant de toucher au code.** Petit pas par petit pas : un chantier, on
   valide, on continue.
 - **Terminé quand Célian a validé**, pas quand le code est écrit.
@@ -86,7 +94,10 @@ pas dire « lance 20 agents ». Sans son oui, je fais le travail moi-même, dans
   le commit, pas avant le push : un secret entré dans l'historique local ne s'en retire plus.
 - **Ne stager que du code source** : aucun secret, aucun binaire, aucun fichier de données.
 - Nommer les chemins, jamais l'index entier.
-- Messages en français, une phrase qui dit ce qui change.
+- **Un commit = une chose.** Message en français : ce qui change, puis pourquoi.
+- **Chaque tâche validée se pousse aussitôt** : la CI juge chaque changement, pas un paquet.
+- **Un `main` rouge s'annule** : si la correction ne tient pas en quelques minutes, `git revert`
+  du commit fautif, puis on corrige à froid.
 
 ## Python et Node
 
@@ -106,17 +117,21 @@ main. L'environnement cloud Linux n'a aucun outil — le dire avant d'en propose
 2026). Un dépôt neuf commence par `setup-matt-pocock-skills` (tracker, labels, `docs/agents/`).
 Quand on ne sait plus quel skill convient, `ask-matt` est le routeur ; ses frontières de phase
 (`outils/claude/ask-matt/PHASE-BOUNDARIES.md`) disent quand continuer, `/clear`, `handoff` ou
-`/compact` — à une frontière, jamais en cours de phase.
+`/compact` — à une frontière, jamais en cours de phase (seule exception : deux corrections ratées).
 
 ### 1 · Démarrer une session
 
-Annoncer la machine et ce qu'elle peut exécuter · établir la to-do de la discussion · lire l'état
-du dépôt. **Fini quand** l'objectif est écrit et que Célian sait où on en est en trois lignes.
+Annoncer la machine et ce qu'elle peut exécuter · `git pull --rebase` (l'autre machine a peut-être
+poussé) · un test de bout en bout qui passe · établir la to-do de la discussion. **Fini quand**
+l'objectif est écrit et que Célian sait où on en est en trois lignes.
 
 ### 2 · Un chantier complet
 
 `grill-with-docs` → `to-spec` → `to-tickets` → `implement` (avec `tdd`) → `code-review` → `/qa`
-si interface → `garde-fous-depot`. Un ticket déjà mesuré entre directement en `implement`.
+si interface → `garde-fous-depot` → push. Un ticket déjà mesuré entre directement en `implement`.
+`code-review` part de lui-même à la fin de chaque ticket, et ne relève que trois choses : un bug,
+une règle écrite violée, un écart à la spec. Jamais une question de goût. Un ticket = un changement
+qu'on peut relire.
 `grill-with-docs`, `to-spec` et `to-tickets` restent dans **une seule fenêtre de contexte** ;
 chaque `implement` repart à vide, `/clear` entre deux tickets. Une question qui a besoin de code
 pour être tranchée fait un détour par `prototype`, aller et retour par `handoff`.
@@ -141,7 +156,9 @@ le composant corrigé. **Fini quand** la cause est écrite et le statut posé.
 
 `impeccable shape` → **l'artefact commentable sur claude.ai** : Célian commente dessus, les
 commentaires arrivent en direct, on peaufine, il valide. Ensuite seulement le code, en copiant un
-écran voisin déjà validé. Puis `audit`, `polish`, `/qa`.
+écran voisin déjà validé. Puis `audit`, `polish`, `/qa`. L'artefact s'ouvre sur sa critique
+cadrée, au-dessus de la maquette et jamais dedans : ce qu'il faut trancher, et ce sur quoi on ne
+demande pas d'avis.
 **Fini quand** axe-core est propre, la console vide, et Célian a validé le rendu.
 
 **Aucun visuel ne part au code sans être passé par un artefact commenté.** Ni un écran neuf, ni
@@ -162,7 +179,8 @@ carte de décision. Ensuite le code, source et bundle ensemble. `document` rég�
 ### 6 · Une image, une vidéo, un PDF
 
 Les skills dédiés. **Piège payé : une capture ne prouve rien toute seule.** Elle montre un état,
-jamais un comportement — un anneau figé et un anneau qui respire donnent la même image.
+jamais un comportement — un anneau figé et un anneau qui respire donnent la même image. La capture
+de référence d'une page `?demo` attrape une régression d'affichage ; le comportement, lui, se teste.
 
 ### 7 · Avant un commit
 
@@ -238,4 +256,4 @@ flou repart en `grill-with-docs`.
 - **Avant livraison d'un écran** : axe-core sans violation sérieuse, contraste ≥ 4,5:1 sous 18 px,
   clavier complet, console vide, aucun défilement horizontal, relecture anti-slop et ton.
 
-<!-- empreinte md5=0d3f9a073d04 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=d8b652796f5e — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
