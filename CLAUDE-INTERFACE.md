@@ -13,9 +13,8 @@ commentaires arrivent en direct, on peaufine, il valide. Ensuite seulement le co
 écran voisin déjà validé. Puis `audit`, `polish`, `/qa`. L'artefact s'ouvre sur sa critique
 cadrée, au-dessus de la maquette et jamais dedans : ce qu'il faut trancher, et ce sur quoi on ne
 demande pas d'avis. Le brief de `shape` cartographie six états (vide, chargement, erreur, donnée
-absente, très long, hors ligne), et la maquette les montre tous. Après le code, avant l'artefact final,
-`impeccable-finish-reviewer` juge le rendu, sur le oui de Célian, et les agents-testeurs font le
-parcours.
+absente, très long, hors ligne), et la maquette les montre tous. Après le code, avant l'artefact final, les agents-testeurs font
+le parcours.
 **Fini quand** axe-core est propre, la console vide, et Célian a validé le rendu.
 
 **Un artefact est la page réelle, pas une image d'elle.** Célian doit pouvoir cliquer, taper,
@@ -83,4 +82,4 @@ carte de décision. Ensuite le code, source et bundle ensemble. `document` rég�
 - **Avant livraison d'un écran** : axe-core sans violation sérieuse, contraste ≥ 4,5:1 sous 18 px,
   clavier complet, console vide, aucun défilement horizontal, relecture anti-slop et ton.
 
-<!-- empreinte md5=f3dc7122014b — source Press-Start/outils/claude/methode/CLAUDE-INTERFACE.md, ne pas éditer ici -->
+<!-- empreinte md5=b7f061d466a0 — source Press-Start/outils/claude/methode/CLAUDE-INTERFACE.md, ne pas éditer ici -->
