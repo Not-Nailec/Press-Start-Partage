@@ -106,7 +106,7 @@ toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'o
 - Node pour les outils de dépôt, sans dépendance quand c'est possible.
 - **Tout tourne à l'identique sur le Mac et sur la station Windows.** Un script en shell ne tient
   pas cette promesse.
-- **Jev (TypeSafe) pour juger du texte** : classer, rapprocher, trier, en `uv run` avec `typesafe-sdk` (`Choice` + critères, seuil 0,6, « — » sous le seuil). Le code garde les relevés, comptes et calculs. Aucune donnée client sans accord. Clé : `TYPESAFE_API_KEY`, dans `~/.zshenv`.
+- **Jev (TypeSafe) pour juger du texte** : classer, rapprocher, trier, en `uv run` avec `typesafe-sdk` (`Choice` + critères, seuil 0,6, « — » sous le seuil). Le code garde les relevés, comptes et calculs. Aucune donnée client sans accord. Clé dans `~/.config/typesafe/cle`, jamais dans l'environnement global : on lance par `node ~/.claude/jev.mjs <commande>`.
 
 # Comment on fait chaque chose
 
@@ -256,4 +256,4 @@ flou repart en `grill-with-docs`.
 - **Avant livraison d'un écran** : axe-core sans violation sérieuse, contraste ≥ 4,5:1 sous 18 px,
   clavier complet, console vide, aucun défilement horizontal, relecture anti-slop et ton.
 
-<!-- empreinte md5=d8b652796f5e — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=de3b8dbe8ab8 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
