@@ -93,10 +93,9 @@ pas dire « lance 20 agents ». Sans son oui, je fais le travail moi-même, dans
 - Python : `uv` uniquement. **Jamais** `pip`, jamais le `python3` système du Mac (3.9).
   `ruff check` et `ruff format` avant de livrer.
 - Node pour les outils de dépôt, sans dépendance quand c'est possible.
-- Récupérer une page web : Scrapling en ligne de commande ou en script, **jamais par son MCP**,
-  qui verse chaque page dans le contexte. Mode d'emploi dans le `CLAUDE.md` global, « Scrapling ».
 - **Tout tourne à l'identique sur le Mac et sur la station Windows.** Un script en shell ne tient
   pas cette promesse.
+- **Jev (TypeSafe) pour juger du texte** : classer, rapprocher, trier, en `uv run` avec `typesafe-sdk` (`Choice` + critères, seuil 0,6, « — » sous le seuil). Le code garde les relevés, comptes et calculs. Aucune donnée client sans accord. Clé : `TYPESAFE_API_KEY`, dans `~/.zshenv`.
 
 # Comment on fait chaque chose
 
@@ -239,4 +238,4 @@ flou repart en `grill-with-docs`.
 - **Avant livraison d'un écran** : axe-core sans violation sérieuse, contraste ≥ 4,5:1 sous 18 px,
   clavier complet, console vide, aucun défilement horizontal, relecture anti-slop et ton.
 
-<!-- empreinte md5=606ad27179ce — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=0d3f9a073d04 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
