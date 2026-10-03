@@ -20,8 +20,11 @@ moi-même, dans la discussion. *(Règle posée le 22/09/2026, après 20 agents l
 **Trois exceptions, déjà accordées** (votes des 02 et 03/10/2026) :
 - l'agent de `code-review` (un seul, sonnet, qui juge Standards et Spec) part de lui-même à la fin
   de chaque ticket ;
-- une tâche planifiée que Célian a validée à sa création (`cleanup` hebdomadaire, agents du soir)
-  tourne sans qu'on lui redemande. Elle ne pousse rien et ne touche pas à `main`.
+- une routine cloud que Célian a validée à sa création (Âge des tickets, Ménage, Recherche du soir,
+  Journal de friction) tourne sans qu'on lui redemande. Elle fait son travail jusqu'au bout, ne
+  s'arrête que sur une décision qui revient à Célian (posée en fin de tour dans sa session cloud,
+  où il répond) et livre sur une branche avec une PR au label `routine` : jamais sur `main`, jamais
+  fusionnée par elle.
 - avant chaque validation d'écran, des agents-testeurs aux profils différents (technicien, client
   novice, joueur) font le parcours et rapportent où ils bloquent (vote 1-utilisateurs, 03/10/2026).
 
@@ -158,8 +161,9 @@ annoncer la machine et ce qu'elle peut exécuter · un test de bout en bout qui 
 rapide écrite dans le `PROJET.md` du dépôt) · établir la to-do de la discussion. **Fini quand**
 l'objectif est écrit et que Célian sait où on en est en trois lignes. Une passation reprise part
 dans `docs/archives/handoffs/` (`git mv`) : `docs/` ne garde que celle qui attend sa reprise.
-Les PR Dependabot dont la CI est verte se fusionnent en début de session ; seules les rouges vont à
-Célian.
+Les PR qui attendent se traitent en début de session, sans que Célian les demande : celles de
+Dependabot à CI verte se fusionnent, les rouges vont à Célian ; celles des routines (label
+`routine`) lui sont présentées en trois phrases chacune, avec la fusion proposée.
 
 ### 2 · Un chantier complet
 
@@ -220,4 +224,4 @@ traces peut n'en désigner que 2 de vraies.
 `triage`, puis les labels canoniques du dépôt. Un ticket mesuré part en `implement` ; un besoin
 flou repart en `grill-with-docs`.
 
-<!-- empreinte md5=d38d663502ae — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=22743de914d2 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
