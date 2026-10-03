@@ -18,7 +18,8 @@ d'agents** et **la mission de chacun**. J'attends son oui avant d'en lancer un s
 moi-même, dans la discussion. *(Règle posée le 22/09/2026, après 20 agents lancés sans son accord.)*
 
 **Trois exceptions, déjà accordées** (votes des 02 et 03/10/2026) :
-- les 2 agents de `code-review` (Standards, Spec) partent d'eux-mêmes à la fin de chaque ticket ;
+- l'agent de `code-review` (un seul, sonnet, qui juge Standards et Spec) part de lui-même à la fin
+  de chaque ticket ;
 - une tâche planifiée que Célian a validée à sa création (`cleanup` hebdomadaire, agents du soir)
   tourne sans qu'on lui redemande. Elle ne pousse rien et ne touche pas à `main`.
 - avant chaque validation d'écran, des agents-testeurs aux profils différents (technicien, client
@@ -219,4 +220,4 @@ traces peut n'en désigner que 2 de vraies.
 `triage`, puis les labels canoniques du dépôt. Un ticket mesuré part en `implement` ; un besoin
 flou repart en `grill-with-docs`.
 
-<!-- empreinte md5=0a0e2bca3e4d — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=d38d663502ae — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
