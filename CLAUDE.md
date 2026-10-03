@@ -164,6 +164,8 @@ dans `docs/archives/handoffs/` (`git mv`) : `docs/` ne garde que celle qui atten
 Les PR qui attendent se traitent en début de session, sans que Célian les demande : celles de
 Dependabot à CI verte se fusionnent, les rouges vont à Célian ; celles des routines (label
 `routine`) lui sont présentées en trois phrases chacune, avec la fusion proposée.
+Un travail qui ne se fait que sur l'autre machine devient un ticket au label `station` ou
+`mac`, avec sa passation : la session qui démarre sur cette machine le prend d'office.
 
 ### 2 · Un chantier complet
 
@@ -224,4 +226,4 @@ traces peut n'en désigner que 2 de vraies.
 `triage`, puis les labels canoniques du dépôt. Un ticket mesuré part en `implement` ; un besoin
 flou repart en `grill-with-docs`.
 
-<!-- empreinte md5=22743de914d2 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=ddd91f90bce7 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
