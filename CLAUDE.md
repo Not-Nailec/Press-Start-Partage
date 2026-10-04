@@ -126,8 +126,16 @@ toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'o
 - **Chaque tâche validée se pousse aussitôt** : la CI juge chaque changement, pas un paquet.
 - **Un `main` rouge s'annule** : si la correction ne tient pas en quelques minutes, `git revert`
   du commit fautif, puis on corrige à froid.
-- **Un lot sensible passe `/security-review` avant d'être poussé** : élévation, mise à jour, réseau,
-  pilotes, secrets. Ce qu'il relève se corrige ou s'écrit dans `docs/securite/MENACES.md`.
+- **Un lot sensible se relit sur sa sécurité, dans la discussion, avant d'être poussé** : élévation, mise
+  à jour, réseau, envoi ou réception de données, secrets, pilotes, authentification. On déroule les contrôles
+  « Revue » de `CONTROLES-SECURITE.md` (à la racine, commun à tous les dépôts) contre le diff, puis on laisse la
+  trace dans `docs/securite/revues.md` : une ligne par zone, qui la nomme, avec les contrôles passés et le
+  verdict. Un hook (`garde-securite`) refuse « fini » sans elle, dans les dépôts qui portent
+  `docs/securite/zones.json`. Ce qui se cherche par recherche (`shell=True`, `innerHTML`, `http://`, CSP,
+  actions épinglées) est déjà contrôlé par `garde-fous-depot`. **Aucun agent de sécurité** : l'agent
+  `code-review` de fin de ticket reçoit le catalogue, et `/security-review` ou un regard d'agent
+  indépendant ne se lancent qu'à la demande de Célian. Un écart se corrige ou s'écrit dans
+  `docs/securite/MENACES.md`.
 
 ## Python et Node
 
@@ -226,4 +234,4 @@ traces peut n'en désigner que 2 de vraies.
 `triage`, puis les labels canoniques du dépôt. Un ticket mesuré part en `implement` ; un besoin
 flou repart en `grill-with-docs`.
 
-<!-- empreinte md5=ddd91f90bce7 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=8ae6e6a46212 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
