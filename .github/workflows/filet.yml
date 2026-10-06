@@ -1,0 +1,70 @@
+# Le filet (socle posé par outils/claude/methode/socle-securite.mjs, ADR-0012) : la vérification se fait en local, en fin
+# de tranche, avec tous les contrôles déclarés dans tranche.json ; GitHub n'en refait qu'une part, sur les PR seulement. Ce
+# workflow est le juge (A) :
+#   1. la PR ne touche aucun fichier du filet (liste fermée de .github/filet/filet-garde.mjs) ;
+#   2. le procès-verbal, jugé par la copie du module du hook d'envoi (.github/filet/, diffusée depuis Press-Start) ;
+#   3. les secrets, sur l'historique entier.
+# Les vulnérabilités (B) sont dans vulnerabilites.yml, quand le dépôt a des dépendances npm.
+# Le juge vient de main, jamais de la PR (#225 de Press-Start) : en `pull_request_target`, ce fichier est celui de main ;
+# main est extrait dans `main/`, la tête de la PR dans `pr/`, et rien de la PR n'est exécuté ni interprété par un outil
+# de paquets. Aucun secret, le jeton ne fait que lire. Une PR de Dependabot est rouge ici jusqu'à ce qu'une session passe
+# sa fin de tranche en local ; une PR qui touche au filet l'est toujours, et Célian la fusionne en connaissance de cause.
+
+name: Filet
+
+on:
+  pull_request_target:
+
+# Le jeton GITHUB_TOKEN ne fait que lire. Les actions sont épinglées par SHA de commit complet, la version en commentaire.
+permissions:
+  contents: read
+
+jobs:
+  filet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}   # le juge et les règles : ceux de main, au même commit que ce workflow
+          path: main
+          persist-credentials: false
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}   # la tête de la PR, lue seulement, jamais exécutée
+          path: pr
+          fetch-depth: 0   # l'historique entier : la tranche, sa base, et les clés retirées des commits passés
+          persist-credentials: false
+
+      - name: La PR ne touche pas au filet qui la juge
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          TETE: ${{ github.event.pull_request.head.sha }}
+        run: node main/.github/filet/filet-garde.mjs "$BASE" "$TETE" pr
+
+      - name: Le procès-verbal de la tranche est complet
+        if: ${{ !cancelled() }}   # chaque verdict se lit, même si le précédent a échoué
+        env:
+          BASE: ${{ github.event.pull_request.base.sha }}
+          TETE: ${{ github.event.pull_request.head.sha }}
+        run: node main/.github/filet/proces-verbal.mjs --juger "$BASE" "$TETE" pr
+
+      - name: Installer gitleaks
+        if: ${{ !cancelled() }}
+        run: |
+          # Échouer fermé (contrôle 26) : l'empreinte est épinglée ici, recopiée du fichier
+          # gitleaks_<version>_checksums.txt de la release, jamais téléchargée au moment du job.
+          VERSION=8.30.1
+          GITLEAKS_SHA256=551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+          curl -fsSL -o gitleaks.tar.gz "https://github.com/gitleaks/gitleaks/releases/download/v${VERSION}/gitleaks_${VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  gitleaks.tar.gz" | sha256sum -c -
+          tar -xzf gitleaks.tar.gz -C /usr/local/bin gitleaks
+          rm gitleaks.tar.gz
+
+      - name: Aucun secret exposé
+        if: ${{ !cancelled() }}
+        run: |
+          # Rien de la PR ne règle le scan : configuration et .gitleaksignore de main (-i main), commentaires
+          # « gitleaks:allow » ignorés. gitleaks lit aussi le .gitleaksignore de la source malgré -i : on le supprime.
+          find pr -name .gitleaksignore -not -path 'pr/.git/*' -delete
+          gitleaks detect --no-banner --source pr --config main/.github/gitleaks.toml -i main --ignore-gitleaks-allow

@@ -1,0 +1,18 @@
+# Chaque lundi, une PR groupée par écosystème (ADR-0012) : le filet la voit rouge tant qu'une session n'a pas passé
+# sa fin de tranche en local ; elle n'est proposée à Célian que sur procès-verbal accepté, et aucun agent ne fusionne.
+# Carence de 7 jours : une version n'est proposée qu'une semaine après sa publication, le temps qu'une version piégée
+# soit retirée. Les alertes de sécurité ne sont pas retardées.
+# Python n'est pas listé : à décider selon la façon dont le dépôt fige ses dépendances (uv).
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
