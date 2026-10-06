@@ -1,6 +1,6 @@
 # Procès-verbal · claude/tranches-185
 
-**Dernier commit :** `4cdae14cdb8cb7a334fa474be94cef86b5cc0f6e`
+**Dernier commit :** `ed69582f1096487cca97ee6e220d89d6cd0abdcd`
 
 ## Contrôles
 
@@ -8,6 +8,7 @@
 |---|---|
 | secrets et fichiers sensibles | réussi |
 | fichiers communs intacts | réussi |
+| Dependabot couvre chaque dossier npm | réussi |
 
 ## Durées
 
@@ -17,6 +18,7 @@ Contrôles : 0,4 s en tout, 10 à la fois au plus.
 |---|---|
 | secrets et fichiers sensibles | 0,3 s |
 | fichiers communs intacts | 0,1 s |
+| Dependabot couvre chaque dossier npm | 0,0 s |
 
 ## Relecture
 
@@ -26,12 +28,13 @@ Modèle : sonnet
 
 Rien à relever.
 
-- Les trois modules de `.github/filet/` sont des copies diffusées. Leur empreinte md5 et la mention « ne pas éditer ici » sont présentes, donc aucune règle de fichier dérivé n'est enfreinte.
-- Les actions du workflow sont épinglées par SHA, et le jeton est en lecture seule.
-- Je n'ai pas relevé de bug qu'une entrée précise ferait échouer. Je n'ai pas exécuté le code ni vérifié que le SHA épinglé de `actions/checkout` (v7.0.1) existe : « écrit, non exécuté ».
+Je n'ai pas trouvé de règle écrite enfreinte ni de bug dans le diff. Les modules `.github/filet/*.mjs` portent leur empreinte et la mention « ne pas éditer ici », donc ce sont des copies diffusées. Les actions du workflow sont épinglées par SHA. `tranche.json` déclare bien les contrôles rapides et les contrôles de fin.
 
 ### Spec
 
-Aucune spec exploitable : le ticket #185 de Press-Start est illisible (gh absent), donc je ne peux comparer le diff à aucune ligne de spec.
+Aucune spec exploitable : le ticket #185 est illisible (`gh` absent ou ticket introuvable). Je n'ai donc aucune ligne de spec à citer. Deux points ressortent seulement des messages de commit.
 
-Seule observation, hors spec : cette PR modifie `.github/`, qui est dans `GARDES`. Le filet la refusera d'office une fois en place. Le commentaire de `filet-garde.mjs` prévoit cette exception, celle de la PR qui pose le juge, et Célian la fusionne en connaissance de cause.
+- **Commit `ed69582`, « chaque dossier npm couvert, React et React DOM ensemble »** : dans le diff, `.github/dependabot.yml` ne contient que l'écosystème `github-actions`. Il n'y a aucune entrée `npm` ni aucun groupe React / React DOM. Un `Glob` sur `**/package.json` ne trouve aucun fichier dans le worktree, donc l'absence d'entrée npm est cohérente avec le dépôt. Mais le message annonce un changement que le diff ne montre pas. Vérifie que le commit corrige bien ce qu'il annonce, ou que le message n'est pas un reste d'un autre dépôt.
+- **`tranche.json`, contrôle « Dependabot couvre chaque dossier npm »** : il ne pourra rien vérifier tant que le dépôt n'a pas de dépendances npm. Ce n'est pas un défaut.
+
+Je n'ai relevé aucun ajout non demandé : toute la tranche est le socle posé par `socle-securite.mjs`, comme l'annonce le commit `4cdae14`.
