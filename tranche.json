@@ -1,0 +1,11 @@
+{
+  "_pourquoi": "Les contrôles de ce dépôt (ADR-0012), posés par socle-securite.mjs de Press-Start : « rapides » tournent à chaque commit, « fin » avant l'envoi d'une tranche. {outils} devient le dossier outils/claude de Press-Start. Ce que le dépôt porte en propre (ses tests, ce que sa CI faisait) s'ajoute ici. Un outil de « outils » absent donne « non exécuté », et la tranche ne part pas.",
+  "rapides": [
+    { "nom": "secrets du commit", "commande": "uv run --no-project python \"{outils}/garde-fous-depot/verifier.py\" . --seulement secrets-indexes", "outils": ["uv", "gitleaks"] }
+  ],
+  "fin": [
+    { "nom": "secrets et fichiers sensibles", "commande": "uv run --no-project python \"{outils}/garde-fous-depot/verifier.py\" . --seulement secrets", "outils": ["uv", "gitleaks"] },
+    { "nom": "fichiers communs intacts", "commande": "uv run --no-project python \"{outils}/garde-fous-depot/verifier.py\" . --seulement fichiers-communs", "outils": ["uv"] },
+    { "nom": "Dependabot couvre chaque dossier npm", "commande": "node \"{outils}/methode/socle-securite.mjs\" . --dependabot", "outils": ["node"] }
+  ]
+}

@@ -1,0 +1,3 @@
+# Règles par défaut de gitleaks. Une exception se justifie ici, avec son pourquoi.
+[extend]
+useDefault = true
