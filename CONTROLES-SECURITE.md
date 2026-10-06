@@ -12,13 +12,13 @@ que nos projets exigent (n° 21 à 32).
 1. **Chaque contrôle est en place, à faire ou dormant.** Un dormant est sans objet tant que son déclencheur
    n'est pas là (par exemple : pas de compte, donc pas de mot de passe à hacher). Il se dit, avec son
    déclencheur ; il ne se supprime pas.
-2. **Ce qui se cherche par recherche se contrôle par script**, au commit et en CI : zéro jeton, jamais oublié
+2. **Ce qui se cherche par recherche se contrôle par script**, au commit et en fin de tranche : zéro jeton, jamais oublié
    (colonne « Mécanique »).
 3. **Ce qui demande du jugement se déroule dans la discussion** avant d'envoyer du code sensible (colonne
    « Revue ») : élévation de droits, mise à jour, réseau, envoi ou réception de données, secrets, pilotes,
    authentification. La trace de cette revue se laisse dans le dépôt (`docs/securite/revues.md` ou le message
    de commit).
-4. **Aucun agent dédié à la sécurité.** L'agent `code-review` de fin de ticket reçoit cette liste en entrée.
+4. **Aucun agent dédié à la sécurité.** L'agent `code-review` de fin de tranche reçoit cette liste en entrée.
    Un regard indépendant d'agent se demande à Célian, lot par lot, avec son nombre et son modèle.
 5. **Échouer fermé** : si une vérification manque, on refuse, on ne laisse pas passer « quand même ».
 6. **Aucun pourcentage de couverture inventé.** Le bilan se lit « n en place, n à faire, n dormants ».
@@ -71,11 +71,11 @@ les dépôts, outils compris. Colonne « Comment » : **M** mécanique (script, 
 
 ## C · Quand le contrôle se fait
 
-- **Au commit et en CI** : tout ce qui est M.
+- **Au commit et en fin de tranche** : tout ce qui est M.
 - **Avant d'envoyer du code sensible** : la revue R, dans la discussion, puis la trace.
 - **Avant la sortie d'un logiciel** : relire les dormants ; chacun dont le déclencheur est apparu devient
   bloquant.
 - **À chaque changement d'architecture** (nouveau processus, service distant, pilote, compte) : rouvrir le
   modèle de menaces du dépôt s'il en a un.
 
-<!-- empreinte md5=ff8c63315796 — source Press-Start/outils/claude/methode/CONTROLES-SECURITE.md, ne pas éditer ici -->
+<!-- empreinte md5=94ce78a6da6a — source Press-Start/outils/claude/methode/CONTROLES-SECURITE.md, ne pas éditer ici -->

@@ -18,8 +18,8 @@ d'agents** et **la mission de chacun**. J'attends son oui avant d'en lancer un s
 moi-même, dans la discussion. *(Règle posée le 22/09/2026, après 20 agents lancés sans son accord.)*
 
 **Trois exceptions, déjà accordées** (votes des 02 et 03/10/2026) :
-- l'agent de `code-review` (un seul, sonnet, qui juge Standards et Spec) part de lui-même à la fin
-  de chaque ticket ;
+- l'agent de `code-review` (un seul, qui juge Standards et Spec) part de lui-même à chaque fin de
+  tranche : sonnet, opus quand la tranche touche une zone de `docs/securite/zones.json` ;
 - une routine cloud que Célian a validée à sa création (Âge des tickets, Ménage, Recherche du soir,
   Journal de friction) tourne sans qu'on lui redemande. Elle fait son travail jusqu'au bout, ne
   s'arrête que sur une décision qui revient à Célian (posée en fin de tour dans sa session cloud,
@@ -43,7 +43,7 @@ toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'o
 2. **Corriger le système, pas l'écran.** Un écran qui contourne un composant révèle un manque du
    composant. On corrige le composant une fois.
 3. **Automatiser, jamais à la demande.** Un contrôle qui dépend de quelqu'un qui pense à le lancer
-   n'est pas un contrôle. Hook, CI, ou les deux. *Corollaire :* **un garde-fou ne se coupe pas.**
+   n'est pas un contrôle. Hook, ou fin de tranche (`tranche.json`). *Corollaire :* **un garde-fou ne se coupe pas.**
    Une erreur d'agent vue deux fois devient un test, un hook ou une règle datée, jamais une
    consigne de plus en prose.
 4. **Committer par chemins explicites.** Chaque session parallèle travaille dans son propre
@@ -119,13 +119,19 @@ toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'o
 
 ## Git
 
-- **Avant chaque commit** : relire `git diff --cached --name-only`, puis `garde-fous-depot`. Avant
-  le commit, pas avant le push : un secret entré dans l'historique local ne s'en retire plus.
+- **Avant chaque commit** : relire `git diff --cached --name-only` ; le hook de commit lance les
+  contrôles rapides de `tranche.json`, secrets compris. Avant le commit, pas à l'envoi : un secret
+  entré dans l'historique local ne s'en retire plus.
 - **Ne stager que du code source** : aucun secret, aucun binaire, aucun fichier de données.
 - **Un commit = une chose.** Message en français : ce qui change, puis pourquoi.
-- **Chaque tâche validée se pousse aussitôt** : la CI juge chaque changement, pas un paquet.
-- **Un `main` rouge s'annule** : si la correction ne tient pas en quelques minutes, `git revert`
-  du commit fautif, puis on corrige à froid.
+- **Chaque tranche validée part avec son procès-verbal** (ADR-0012). La tranche, c'est ce qui
+  s'accumule en local jusqu'à la validation de Célian, à l'écran ou sur une preuve d'une ligne.
+  Alors `git push` lance la fin de tranche : les contrôles de `tranche.json`, puis `code-review` ;
+  elle écrit le procès-verbal dans `docs/tranches/`, le committe, et la tranche part en une seule
+  PR. Un contrôle en échec ou « non exécuté » arrête l'envoi. Changer de machine en cours de
+  tranche : `git push origin HEAD:sauvegarde/<nom>`, sans PR.
+- **Un `main` cassé s'annule** : un défaut trouvé après une fusion, dont la correction ne tient pas
+  en quelques minutes, se règle par `git revert` du commit fautif, puis on corrige à froid.
 - **Un lot sensible se relit sur sa sécurité, dans la discussion, avant d'être poussé** : élévation, mise
   à jour, réseau, envoi ou réception de données, secrets, pilotes, authentification. On déroule les contrôles
   « Revue » de `CONTROLES-SECURITE.md` (à la racine, commun à tous les dépôts) contre le diff, puis on laisse la
@@ -133,7 +139,7 @@ toute règle plus ancienne de ce fichier : en cas d'écart, c'est la règle qu'o
   verdict. Un hook (`garde-securite`) refuse « fini » sans elle, dans les dépôts qui portent
   `docs/securite/zones.json`. Ce qui se cherche par recherche (`shell=True`, `innerHTML`, `http://`, CSP,
   actions épinglées) est déjà contrôlé par `garde-fous-depot`. **Aucun agent de sécurité** : l'agent
-  `code-review` de fin de ticket reçoit le catalogue, et `/security-review` ou un regard d'agent
+  `code-review` de fin de tranche reçoit le catalogue, et `/security-review` ou un regard d'agent
   indépendant ne se lancent qu'à la demande de Célian. Un écart se corrige ou s'écrit dans
   `docs/securite/MENACES.md`.
 
@@ -169,21 +175,23 @@ annoncer la machine et ce qu'elle peut exécuter · un test de bout en bout qui 
 rapide écrite dans le `PROJET.md` du dépôt) · établir la to-do de la discussion. **Fini quand**
 l'objectif est écrit et que Célian sait où on en est en trois lignes. Une passation reprise part
 dans `docs/archives/handoffs/` (`git mv`) : `docs/` ne garde que celle qui attend sa reprise.
-Les PR qui attendent se traitent en début de session, sans que Célian les demande : celles de
-Dependabot à CI verte se fusionnent, les rouges vont à Célian ; celles des routines (label
-`routine`) lui sont présentées en trois phrases chacune, avec la fusion proposée.
+Les PR qui attendent se traitent en début de session, sans que Célian les demande : celles des
+routines (label `routine`) et de Dependabot ne lui sont proposées, en trois phrases chacune, que si
+leur procès-verbal est accepté ; les autres passent d'abord par la fin de tranche en local. Exception, celles
+de Dependabot pour les actions de la CI : rouges d'office (ADR-0012, #225), montrées quand même. Aucun agent ne
+fusionne.
 Un travail qui ne se fait que sur l'autre machine devient un ticket au label `station` ou
 `mac`, avec sa passation : la session qui démarre sur cette machine le prend d'office.
 
 ### 2 · Un chantier complet
 
-`grill-with-docs` → `to-spec` → `to-tickets` → `implement` (avec `tdd`) → `code-review` → `/qa`
-si interface → `garde-fous-depot` → push. Un ticket déjà mesuré entre directement en `implement`.
-`code-review` part de lui-même à la fin de chaque ticket, et ne relève que trois choses : un bug,
-une règle écrite violée, un écart à la spec. Jamais une question de goût. Un ticket = un changement
-qu'on peut relire. La spec commence par le texte côté client (note de version ou aide), puis son
-appétit, son hors-périmètre et son disjoncteur : disjoncteur déclenché, on s'arrête et on remet en
-forme, on ne prolonge pas.
+`grill-with-docs` → `to-spec` → `to-tickets` → `implement` (avec `tdd`) → `/qa` si interface →
+validation de Célian → `git push`, qui lance la fin de tranche. Un ticket déjà mesuré entre
+directement en `implement`. `code-review` part de lui-même à chaque fin de tranche, et ne relève
+que trois choses : un bug, une règle écrite violée, un écart à la spec. Jamais une question de goût.
+Un ticket = un changement qu'on peut relire. La spec commence par le texte côté client (note de
+version ou aide), puis son appétit, son hors-périmètre et son disjoncteur : disjoncteur déclenché,
+on s'arrête et on remet en forme, on ne prolonge pas.
 `grill-with-docs`, `to-spec` et `to-tickets` restent dans **une seule fenêtre de contexte** ;
 chaque `implement` repart à vide, `/clear` entre deux tickets. Une question qui a besoin de code
 pour être tranchée fait un détour par `prototype`, aller et retour par `handoff`.
@@ -234,4 +242,4 @@ traces peut n'en désigner que 2 de vraies.
 `triage`, puis les labels canoniques du dépôt. Un ticket mesuré part en `implement` ; un besoin
 flou repart en `grill-with-docs`.
 
-<!-- empreinte md5=8ae6e6a46212 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=ec17846f870a — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
