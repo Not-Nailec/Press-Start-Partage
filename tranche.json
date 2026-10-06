@@ -5,6 +5,7 @@
   ],
   "fin": [
     { "nom": "secrets et fichiers sensibles", "commande": "uv run --no-project python \"{outils}/garde-fous-depot/verifier.py\" . --seulement secrets", "outils": ["uv", "gitleaks"] },
-    { "nom": "fichiers communs intacts", "commande": "uv run --no-project python \"{outils}/garde-fous-depot/verifier.py\" . --seulement fichiers-communs", "outils": ["uv"] }
+    { "nom": "fichiers communs intacts", "commande": "uv run --no-project python \"{outils}/garde-fous-depot/verifier.py\" . --seulement fichiers-communs", "outils": ["uv"] },
+    { "nom": "Dependabot couvre chaque dossier npm", "commande": "node \"{outils}/methode/socle-securite.mjs\" . --dependabot", "outils": ["node"] }
   ]
 }
