@@ -19,21 +19,62 @@ export const DECLARATION = 'tranche.json';
 // Sans NODE_TEST_CONTEXT non plus : un contrôle `node --test` lancé depuis un test rendrait ses résultats au parent
 // et sortirait à 0, même rouge (constaté sur le test de #222).
 export const ENV_PROPRE = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_') && k !== 'NODE_TEST_CONTEXT'));
-const git = (d, ...a) => execFileSync('git', ['-C', d, ...a], { encoding: 'utf8', env: ENV_PROPRE, stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+
+// Le délai de chaque git (#288), comme celui de tranche-session.mjs. Sans lui, un git qui bloque (verrou, disque lent) mène le
+// contrôle de la fusion (garde-fusion, par jugerPr) à l'échéance de son crochet : Claude Code l'abandonne alors, et la commande
+// part sans contrôle (contrôle 26, « le doute refuse »). Dépassé, git lève une erreur ETIMEDOUT : le juge la refuse.
+export const DELAI_GIT = 15_000;
+let delaiCourant = () => DELAI_GIT;
+/** Le délai (ms) de l'appel `git <a>` : DELAI_GIT, sauf couture de test. */
+export const delaiDeGit = (a) => delaiCourant(a);
+/**
+ * Couture de test : un délai plus court, pour prouver qu'un git qui bloque refuse sans attendre 15 s. `delai` : des ms, ou une
+ * fonction des arguments de git qui rend des ms (ou undefined pour le délai normal). Jamais plus long que DELAI_GIT. Rend la
+ * fonction qui remet le délai d'avant.
+ */
+export function delaiGitPourTest(delai) {
+  const avant = delaiCourant;
+  // Au moins 1 ms : `timeout: 0` voudrait dire « aucun délai » pour execFileSync. Une valeur qui n'est pas un nombre garde le délai normal.
+  delaiCourant = (a) => {
+    const ms = typeof delai === 'function' ? delai(a) : delai;
+    return Number.isFinite(ms) ? Math.max(1, Math.min(DELAI_GIT, ms)) : DELAI_GIT;
+  };
+  return () => { delaiCourant = avant; };
+}
+const git = (d, ...a) => execFileSync('git', ['-C', d, ...a], { encoding: 'utf8', env: ENV_PROPRE, stdio: ['ignore', 'pipe', 'ignore'], timeout: delaiDeGit(a) }).trim();
+
+// Une absence est une réponse de git (une liste vide, code 0), jamais un échec de git : un échec ne se lit pas comme « rien ». Délai
+// dépassé (ETIMEDOUT), git tué par un signal, lecture coupée faute de place (ENOBUFS), git introuvable, objet corrompu ou droits
+// refusés (code 128, comme un fichier absent) : tout remonte, et le juge refuse. Lus comme « absent », ils laissaient passer ce
+// que le doute devait refuser (zones de main ignorées, contrôles de main ignorés, procès-verbal d'une tranche fusionnée réécrit).
+
+/** Le texte de `fichier` au commit `c` ; null s'il n'y est pas (`ls-tree` rend alors une liste vide). */
+function lireAu(d, c, fichier) {
+  return git(d, 'ls-tree', '--full-tree', '--name-only', c, '--', fichier) ? git(d, 'show', `${c}:${fichier}`) : null;
+}
+
+/** Le JSON de `fichier` au commit `c` ; null s'il n'y est pas ou s'il est illisible. */
+function lireJson(d, c, fichier) {
+  const texte = lireAu(d, c, fichier);
+  try { return texte === null ? null : JSON.parse(texte); } catch { return null; }
+}
 
 /** La liste des contrôles de fin que déclare `tranche.json` au commit `c` ; null s'il n'y en a pas. */
 function declares(d, c) {
-  try { return JSON.parse(git(d, 'show', `${c}:${DECLARATION}`)).fin.map((x) => x.nom); } catch { return null; }
+  try { return lireJson(d, c, DECLARATION)?.fin.map((x) => x.nom) ?? null; } catch (e) { if (e instanceof TypeError) return null; throw e; }
 }
 
 export const ZONES = 'docs/securite/zones.json';
 
+// zones.json au commit `c`, lu en un seul endroit pour les zones et pour le fichier de trace.
+const lireZones = (d, c) => lireJson(d, c, ZONES);
+
 /** Les zones de sécurité déclarées au commit `c` (préfixes, ou « *suffixe »), comme les lit garde-securite. */
 function zones(d, c) {
-  try { return JSON.parse(git(d, 'show', `${c}:${ZONES}`)).zones ?? []; } catch { return []; }
+  return lireZones(d, c)?.zones ?? [];
 }
 function trace(d, ...commits) {
-  for (const c of commits) { try { const t = JSON.parse(git(d, 'show', `${c}:${ZONES}`)).trace; if (t) return t; } catch { /* suivant */ } }
+  for (const c of commits) { const t = lireZones(d, c)?.trace; if (t) return t; }
   return 'docs/securite/revues.md';
 }
 
@@ -89,9 +130,23 @@ function jugerSansFilet(d, base, tete) {
     return refus(`${chemin} ne désigne pas le dernier commit de la tranche`);
   }
   const manques = [];
-  // Après le commit désigné, seul le procès-verbal lui-même peut encore changer. Une fusion compte pour ce qu'elle apporte.
-  const apres = git(d, 'rev-list', '--reverse', `${designe}..${tete}`).split('\n').filter(Boolean)
-    .filter((c) => git(d, '-c', 'core.quotepath=false', 'diff-tree', '--no-commit-id', '--name-only', '-r', '-m', c).split('\n').some((f) => f && f !== chemin));
+  // Après le commit désigné, seul le procès-verbal lui-même peut encore changer. Les commits de la base fusionnée ne sont
+  // pas ceux de la tranche. Une fusion de la base ne la périme pas si elle ne fait que la réunir à la base : chaque fichier
+  // de la tranche garde la version de la tranche, chaque autre fichier prend celle de la base. Sinon (conflit résolu, version
+  // de main reprise sur un fichier de la tranche, travail de main écarté par `-s ours`), elle la périme. `-m` comparait la
+  // fusion à main, qui ne porte pas la tranche : toute fusion propre de main rendait le procès-verbal périmé (#242, point 7).
+  const noms = (...a) => git(d, '-c', 'core.quotepath=false', ...a).split('\n').filter((f) => f && f !== chemin);
+  const dansLaTranche = new Set(noms('diff', '--name-only', '--no-renames', `${base}...${designe}`));
+  const apres = git(d, 'rev-list', '--reverse', `${designe}..${tete}`, '--not', base).split('\n').filter(Boolean)
+    .filter((c) => {
+      const [tranche, ...fusionnes] = git(d, 'rev-list', '--parents', '-n', '1', c).split(' ').slice(1);
+      if (!fusionnes.length) return noms('diff-tree', '--no-commit-id', '--name-only', '-r', c).length > 0;
+      // Un fichier changé des deux côtés n'a aucune version relue : la garder d'un côté efface le travail de l'autre
+      // (`checkout --ours`, `-s ours`), la mêler fait un texte neuf. Seule une fusion sans fichier commun reste jugée.
+      return noms('diff', '--name-only', '--no-renames', tranche, c).some((f) => dansLaTranche.has(f))
+        || fusionnes.some((p) => noms('diff', '--name-only', '--no-renames', p, c).some((f) => !dansLaTranche.has(f)))
+        || fusionnes.some((p) => noms('diff', '--name-only', '--no-renames', `${tranche}...${p}`).some((f) => dansLaTranche.has(f)));
+    });
   if (apres.length) {
     const liste = apres.map((c) => git(d, 'log', '-1', '--format=%h %s', c)).join(' ; ');
     manques.push(`procès-verbal périmé : ${apres.length} commit(s) après le commit désigné (${liste})`);
@@ -141,7 +196,10 @@ export function depart(d, tete = 'HEAD') {
   const distant = git(d, 'remote').split('\n').filter(Boolean).sort((a, b) => (b === 'origin') - (a === 'origin'))[0];
   if (!distant) return null;
   for (const ref of [`${distant}/HEAD`, `${distant}/main`, `${distant}/master`]) {
-    try { return git(d, 'merge-base', tete, ref); } catch { /* référence suivante */ }
+    // for-each-ref compare par préfixe : « origin/main/x » répond pour « origin/main », qui n'existe pas. La référence suivante,
+    // si celle-ci n'existe pas exactement.
+    if (!git(d, 'for-each-ref', '--format=%(refname)', `refs/remotes/${ref}`).split('\n').includes(`refs/remotes/${ref}`)) continue;
+    try { return git(d, 'merge-base', tete, ref); } catch (e) { if (e?.status !== 1) throw e; } // 1 : aucun ancêtre commun
   }
   return null;
 }
@@ -161,7 +219,7 @@ export function cheminDuPv(d, base) {
   // Écrit par une relecture précédente mais pas encore committé (un autre jour, peut-être) : on le reprend. Seulement s'il
   // n'est pas suivi : un fichier suivi au même nom est le procès-verbal d'une tranche déjà fusionnée, jamais réécrit.
   const dossier = join(d, DOSSIER);
-  const suivi = (f) => { try { git(d, 'ls-files', '--error-unmatch', `${DOSSIER}${f}`); return true; } catch { return false; } };
+  const suivi = (f) => git(d, 'ls-files', '--', `${DOSSIER}${f}`) !== '';
   const surDisque = existsSync(dossier) && readdirSync(dossier).find((f) => /^\d{4}-\d{2}-\d{2}-/.test(f) && f.slice(11).startsWith(branche) && sien(`${DOSSIER}${f}`) && !suivi(f));
   if (surDisque) return `${DOSSIER}${surDisque}`;
   // Un nom neuf, jamais celui d'un fichier qui existe déjà (une tranche fusionnée le même jour, au même nom de branche).
@@ -229,7 +287,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
 /** Arrête un processus et tout ce qu'il a lancé : sous Windows par taskkill /T, ailleurs par son groupe (lancé en `detached`). */
 export function arreterArbre(pid) {
   try {
-    if (process.platform === 'win32') spawnSync('taskkill', ['/pid', String(pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore' });
+    // Un délai, comme tout programme du chemin du contrôle (test des délais de garde-fusion.test.mjs).
+    if (process.platform === 'win32') spawnSync('taskkill', ['/pid', String(pid), '/T', '/F'], { windowsHide: true, stdio: 'ignore', timeout: 10_000 });
     else process.kill(-pid, 'SIGKILL');
   } catch { /* déjà fini */ }
 }
@@ -237,11 +296,11 @@ export function arreterArbre(pid) {
 // Les procès-verbaux de la tranche `base..tete` : ceux de l'écart net (jamais celui d'une tranche fusionnée qu'une fusion
 // aurait touché puis rendu tel quel), du plus récent au plus ancien dans l'historique.
 function pvsDeLaTranche(d, base, tete) {
-  const existe = (f) => { try { git(d, 'cat-file', '-e', `${tete}:${f}`); return true; } catch { return false; } };
+  const existe = (f) => git(d, 'ls-tree', '--full-tree', '--name-only', tete, '--', f) !== '';
   const nets = new Set(git(d, '-c', 'core.quotepath=false', 'diff', '--name-only', '--diff-filter=AM', base, tete, '--', DOSSIER)
     .split('\n').filter(Boolean).filter(existe));
   const recents = git(d, '-c', 'core.quotepath=false', 'log', '--format=', '--name-only', '--diff-filter=AM', `${base}..${tete}`, '--', DOSSIER).split('\n');
   return [...new Set([...recents.filter((f) => nets.has(f)), ...nets])];
 }
 
-// empreinte md5=6a9ea2e1adc3 — source Press-Start/outils/claude/hooks/proces-verbal.mjs, ne pas éditer ici
+// empreinte md5=3e4a9b2abc8a — source Press-Start/outils/claude/hooks/proces-verbal.mjs, ne pas éditer ici
