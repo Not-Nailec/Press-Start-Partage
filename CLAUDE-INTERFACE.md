@@ -1,3 +1,10 @@
+---
+paths:
+  - "**/*.{html,htm,css,scss,tsx,jsx,svg,vue}"
+  - "**/maquettes/**"
+  - "**/app/web/**"
+---
+
 # Interface : la chaîne et les règles
 
 Compagnon du `CLAUDE.md` commun, diffusé avec lui dans tous les dépôts de Célian. Source :
@@ -14,7 +21,8 @@ commentaires arrivent en direct, on peaufine, il valide. Ensuite seulement le co
 cadrée, au-dessus de la maquette et jamais dedans : ce qu'il faut trancher, et ce sur quoi on ne
 demande pas d'avis. Le brief de `shape` cartographie six états (vide, chargement, erreur, donnée
 absente, très long, hors ligne), et la maquette les montre tous. Après le code, avant l'artefact final, les agents-testeurs font
-le parcours.
+le parcours, un par profil (technicien, client novice, joueur), et rapportent où ils bloquent. Ils
+passent par la règle des agents : Mission, Fini quand, `sonnet` (ils exécutent un parcours), copie à part.
 **Fini quand** axe-core est propre, la console vide, et Célian a validé le rendu.
 
 **Un artefact est la page réelle, pas une image d'elle.** Célian doit pouvoir cliquer, taper,
@@ -82,4 +90,4 @@ carte de décision. Ensuite le code, source et bundle ensemble. `document` rég�
 - **Avant livraison d'un écran** : axe-core sans violation sérieuse, contraste ≥ 4,5:1 sous 18 px,
   clavier complet, console vide, aucun défilement horizontal, relecture anti-slop et ton.
 
-<!-- empreinte md5=b7f061d466a0 — source Press-Start/outils/claude/methode/CLAUDE-INTERFACE.md, ne pas éditer ici -->
+<!-- empreinte md5=57f75e6092bb — source Press-Start/outils/claude/methode/CLAUDE-INTERFACE.md, ne pas éditer ici -->
