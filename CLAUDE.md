@@ -95,8 +95,8 @@ fusionnées par elles.
 - **Environ 20 % de dette** : un ticket sur cinq remet en ordre. `--dette` le marque,
   `node ~/.claude/mesure-ticket.mjs --bilan` donne la part des 28 derniers jours ; un écart net se
   dit à Célian.
-- **Des cycles à appétit fixe**, durée fixée par Célian, puis quelques jours de rangement ; le
-  cycle et sa date de fin en tête de `docs/ETAT.md`, la date passée on range avant d'ouvrir.
+- **Pas de cycle daté** : on avance sans échéance ; seul l'appétit de chaque spec borne le travail
+  *(Célian, 12/10/2026, remplace la pratique votée `9-cycles`)*.
 
 ## Vérité des données
 
@@ -196,4 +196,4 @@ colonnes : testé réellement · seulement relu · invérifiable ici, et pourquo
 fichier. Un grep compte ce qu'il cherche, pas ce que ça veut dire. Une issue : `triage`, puis les
 labels du dépôt ; un ticket mesuré part en `implement`, un besoin flou en `grill-with-docs`.
 
-<!-- empreinte md5=f7ea1b460ea4 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=231917872fc2 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
