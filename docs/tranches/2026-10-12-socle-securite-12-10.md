@@ -1,6 +1,6 @@
 # Procès-verbal · socle/securite-12-10
 
-**Dernier commit :** `6baa68be41bbf9d24afc11e37e01ce67faedff0f`
+**Dernier commit :** `fd1c673bada080750a505d2e6db3721f09385a9a`
 
 ## Contrôles
 
@@ -13,14 +13,14 @@
 
 ## Durées
 
-Contrôles : 2,6 s en tout, 10 à la fois au plus.
+Contrôles : 1,0 s en tout, 10 à la fois au plus.
 
 | Contrôle | Durée |
 |---|---|
-| secrets et fichiers sensibles | 1,9 s |
-| sécurité mécanique | 0,9 s |
-| fichiers communs intacts | 0,4 s |
-| Dependabot couvre chaque dossier npm | 0,5 s |
+| secrets et fichiers sensibles | 0,5 s |
+| sécurité mécanique | 0,1 s |
+| fichiers communs intacts | 0,2 s |
+| Dependabot couvre chaque dossier npm | 0,1 s |
 
 ## Coût
 
@@ -32,16 +32,16 @@ Modèle : opus
 
 ### Standards
 
-- **`docs/securite/revues.md` : la zone « intégration continue » n'a pas de ligne.** Le diff modifie `tranche.json`, et `zones.json` range ce fichier dans la zone « intégration continue ». La seule ligne de la trace a pour colonne « Zone » « contrôles de sécurité », et c'est là que `tranche.json` est cité. Or `nomsSansLigne` (`.github/filet/zone-revue.mjs:16`) ne compte une zone comme relue que si la colonne « Zone » porte exactement son nom. Elle sera donc déclarée sans revue par `garde-securite` et `proces-verbal.mjs`. Cela enfreint la règle « Une ligne par zone et par lot » (`revues.md:3`) et `CLAUDE.md` (Git) : « une ligne par zone dans `docs/securite/revues.md` ».
-- **`docs/securite/CONTROLES.md` : onze contrôles sont marqués « — sans objet » sans déclencheur** (n° 3, 4, 6, 7, 9 à 12, 16, 18, 32). `CONTROLES-SECURITE.md`, règle 1, dit : « Chaque contrôle est en place, à faire ou dormant… Il se dit, avec son déclencheur. » La légende du fichier lui-même demande « dormant (dire le déclencheur) ».
-- **La trace et l'état se contredisent.** La ligne de `revues.md` déclare les contrôles 13, 15, 19, 21, 29 et 30 « passés par le contrôle mécanique », mais `CONTROLES.md` les laisse tous en « ⬜ à arbitrer ». Le n° 21 (CSP d'une WebView) se vérifie « M + E » : le contrôle mécanique seul ne suffit pas à le déclarer passé. Le n° 29 est bien en place dans `filet.yml` (actions épinglées par SHA, `contents: read`), mais il n'est pas marqué ✅.
-- **`docs/securite/security.txt` : adresse de contact à vérifier.** L'adresse publiée (`ruel.celian11@gmail.com`) n'est pas celle du compte connu (`celian.ruel3@gmail.com`). Si elle est fausse, le contrôle 30 (« canal de signalement public ») ne mène nulle part, sur un dépôt public où `PROJET.md` rappelle que « l'erreur ne se rattrape pas ». Je n'ai pas pu vérifier laquelle est la bonne.
+1. **`docs/securite/CONTROLES.md`, contrôles 3, 4, 6, 7, 9 à 12, 16, 18 et 32.** Ils sont marqués « — sans objet » avec une colonne « Où / pourquoi » vide. Cela enfreint la règle d'emploi n° 1 de `CONTROLES-SECURITE.md` : « Un dormant […] se dit, avec son déclencheur ; il ne se supprime pas. » La légende du fichier le redemande d'ailleurs : « 💤 dormant (dire le déclencheur) ». Ces lignes contournent ce statut en se déclarant « sans objet » sans donner de raison.
+
+2. **`docs/securite/revues.md`, ligne 2.** Elle affirme « 13, 15, 19, 21, 29, 30 passés par le contrôle mécanique ». Or `controles.json` contient `"pages": []`. `controles-securite.mjs` (lignes 112 à 115) ne parcourt alors aucune page, et le contrôle 21 passe sans rien avoir vérifié. L'écrire « passé » enfreint la règle d'emploi n° 5 (« Échouer fermé ») et la règle de `CLAUDE.md` : « un contrôle "non exécuté" n'est pas un succès ».
+
+3. **`docs/securite/CONTROLES.md` contredit `revues.md`.** Les contrôles 13, 15, 19, 21, 29 et 30 restent « ⬜ à arbitrer » alors que la trace les dit passés et branchés en fin de tranche, dans `tranche.json`. Le contrôle 29, par exemple, est réellement en place : `filet.yml` épingle les actions par SHA et déclare `permissions: contents: read`. Le fichier d'état ne dit donc pas l'état du dépôt, contrairement à ce que demande sa propre en-tête (« Ce fichier-ci dit l'état de ce dépôt »).
+
+4. **`docs/securite/revues.md`, ligne 2, colonne « Fichiers ».** Elle cite `tranche.json`, qui appartient à la zone « intégration continue » d'après `zones.json`. Cela enfreint l'en-tête de `revues.md` : « Une ligne par zone […] Elle NOMME la zone […], les fichiers ».
+
+5. **`docs/securite/CONTROLES.md`, ligne 8.** Le fichier exige « aucun "⬜ à arbitrer" avant la première livraison », mais d'après `PROJET.md`, ce dépôt publie déjà des versions (`publier.ps1`, releases). Vingt et un contrôles restent « à arbitrer » sur un dépôt déjà livré et public.
 
 ### Spec
 
-Le ticket #244 est illisible (`gh` absent ou ticket introuvable), donc aucune ligne de spec à citer. Je relève seulement ce qui semble fait mais mal fait au regard du but annoncé par le commit (« état des contrôles, zones, trace, contrôle mécanique en fin de tranche ») :
-
-- **État des contrôles** : posé mais non rempli. Tous les contrôles applicables restent « ⬜ à arbitrer », y compris le n° 29, déjà en place dans ce dépôt. Le fichier exige de remplir avec Célian avant la première livraison.
-- **Trace** : incomplète, comme décrit plus haut. La zone « intégration continue », touchée par `tranche.json`, n'a pas sa ligne, ce qui fera échouer la vérification de fin de tranche.
-
-Rien de fait hors du but annoncé.
+Le ticket #244 est cité mais illisible (gh absent ou ticket introuvable) : aucune spec trouvée.
