@@ -17,8 +17,13 @@ export const DECLARATION = 'tranche.json';
 
 // Sans les GIT_* hérités : lancé depuis un hook git, GIT_DIR ferait viser à `git -C` le dépôt du hook (04/10).
 // Sans NODE_TEST_CONTEXT non plus : un contrôle `node --test` lancé depuis un test rendrait ses résultats au parent
-// et sortirait à 0, même rouge (constaté sur le test de #222).
-export const ENV_PROPRE = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_') && k !== 'NODE_TEST_CONTEXT'));
+// et sortirait à 0, même rouge (constaté sur le test de #222). PS_SOUS_TEST le remplace : l'enfant se sait encore sous test.
+/** Lancé par un test, directement ou par un enfant. Sans PS_SOUS_TEST, un hook lancé par un test lançait la vraie relecture, facturée (12/10). */
+export const sousTest = () => Boolean(process.env.NODE_TEST_CONTEXT || process.env.PS_SOUS_TEST);
+export const ENV_PROPRE = {
+  ...Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_') && k !== 'NODE_TEST_CONTEXT')),
+  ...(sousTest() ? { PS_SOUS_TEST: '1' } : {}),
+};
 
 // Le délai de chaque git (#288), comme celui de tranche-session.mjs. Sans lui, un git qui bloque (verrou, disque lent) mène le
 // contrôle de la fusion (garde-fusion, par jugerPr) à l'échéance de son crochet : Claude Code l'abandonne alors, et la commande
@@ -303,4 +308,4 @@ function pvsDeLaTranche(d, base, tete) {
   return [...new Set([...recents.filter((f) => nets.has(f)), ...nets])];
 }
 
-// empreinte md5=3e4a9b2abc8a — source Press-Start/outils/claude/hooks/proces-verbal.mjs, ne pas éditer ici
+// empreinte md5=20c3ea5f3dee — source Press-Start/outils/claude/hooks/proces-verbal.mjs, ne pas éditer ici
