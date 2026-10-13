@@ -1,0 +1,21 @@
+{
+  "trace": "docs/securite/revues.md",
+  "zones": [
+    {
+      "nom": "intégration continue",
+      "chemins": [
+        ".github/workflows/",
+        ".github/dependabot.yml",
+        ".github/filet/",
+        "tranche.json"
+      ]
+    },
+    {
+      "nom": "contrôles de sécurité",
+      "chemins": [
+        "docs/securite/controles.json",
+        "docs/securite/zones.json"
+      ]
+    }
+  ]
+}
