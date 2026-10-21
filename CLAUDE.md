@@ -26,7 +26,7 @@ Au-delà, sa fenêtre d'autorisation pose la question à Célian (seule exceptio
 Lancés ensemble, les agents voient le même compte : pas plus que de places libres ; un agent de plus
 de deux heures sort du compte. Chaque agent s'annonce à Célian en une ligne (mission, modèle). Les
 routines cloud validées à leur création (Âge des tickets, Ménage, Recherche du soir, Journal de
-friction) vont au bout, ne s'arrêtent que sur une décision de Célian (posée en fin de tour dans leur
+friction, Veille des skills) vont au bout, ne s'arrêtent que sur une décision de Célian (posée en fin de tour dans leur
 session cloud) et livrent sur une branche avec une PR au label `routine` : jamais `main`, jamais
 fusionnées par elles.
 
@@ -59,7 +59,8 @@ fusionnées par elles.
 ## Comment on travaille
 
 - **Célian pilote, j'exécute.** Il donne le travail et prend les décisions ; je fais tout ce qui
-  peut être fait à sa place, et je réponds à l'objectif fixé, pas à ce que je trouve en route.
+  peut être fait à sa place, et je réponds à l'objectif fixé ; ce que je trouve en route suit
+  « Ce que je trouve se corrige » (Rythme) : corrigé tout de suite si c'est petit, sinon demandé à Célian.
 - **Une to-do par discussion.** Sans objectif écrit, on ne commence pas. Avant d'exécuter, trois
   points : l'objection (ou « aucune »), le modèle que je propose, et le **« fini quand »** en
   commandes qu'on peut lancer.
@@ -70,7 +71,8 @@ fusionnées par elles.
   `/clear`), et Célian tranche. Un seul gros changement en relecture à la fois : rien ne s'empile dessus.
 - **Un résultat se constate, il ne se simule pas.** Ce qui n'a pas tourné se dit « écrit, non
   exécuté » ; un contrôle « non exécuté » n'est pas un succès. Une machine qui ne peut pas exécuter le
-  dit avant qu'on propose un outil : l'environnement cloud Linux n'exécute rien de nos outils.
+  dit avant qu'on propose un outil : l'environnement cloud Linux n'exécute rien de nos outils installés
+  (skills qui pilotent un navigateur, l'app, Ghostscript…) ; seuls node, git et uv y tournent.
 - **Ce qui se mesure ne se déduit pas.** Un ratio, un compte, l'effet d'une cascade CSS se
   mesurent dans les conditions réelles.
 - **Un bug est corrigé quand on sait pourquoi il existait** et que quelque chose l'empêche de
@@ -97,6 +99,14 @@ fusionnées par elles.
   dit à Célian.
 - **Pas de cycle daté** : on avance sans échéance ; seul l'appétit de chaque spec borne le travail
   *(Célian, 12/10/2026, remplace la pratique votée `9-cycles`)*.
+- **Ce que je trouve se corrige, il ne part pas en ticket** *(Célian, 14/10/2026, remplace « Pas de
+  ticket neuf sans Célian »)* : un défaut ou une amélioration croisés en route se corrigent tout de
+  suite quand c'est petit et sans risque ; sinon je le dis à Célian et je lui demande
+  (`AskUserQuestion`) si on le corrige maintenant. Un ticket ne s'ouvre que s'il le choisit. Ce qui reste d'un ticket se complète
+  dans ce ticket ; ce qui ne se fait que sur l'autre machine va au ticket unique de cette machine.
+- **Les outils aussi** *(Célian, 14/10/2026)* : ce que les relectures trouvent dans `outils/claude/`
+  se corrige dans la tranche en cours, ou se dit à Célian ; seul ce qu'il remet à plus tard s'ajoute
+  au ticket unique au label `outils`, jamais à un ticket neuf.
 
 ## Vérité des données
 
@@ -111,7 +121,8 @@ fusionnées par elles.
 
 - **Avant chaque commit** : relire `git diff --cached --name-only`. Le hook de commit lance les
   contrôles rapides, secrets compris : un secret entré dans l'historique ne s'en retire plus.
-- **Ne stager que du code source** : aucun secret, aucun binaire, aucun fichier de données.
+- **Ne stager que du code source** : aucun secret, aucun binaire, aucun fichier de données, sauf
+  exception que le `PROJET.md` du dépôt écrit avec sa décision (jamais pour un secret).
 - **Un commit = une chose.** Message en français : ce qui change, puis pourquoi.
 - **Chaque tranche validée part avec son procès-verbal** (ADR-0012). La tranche s'accumule en
   local jusqu'à la validation de Célian ; alors `git push` lance la fin de tranche (contrôles de
@@ -126,7 +137,8 @@ fusionnées par elles.
 - **Un lot sensible se relit sur sa sécurité, dans la discussion, avant d'être poussé** (élévation,
   mise à jour, réseau, données envoyées ou reçues, secrets, pilotes, authentification) : les
   contrôles « Revue » de `CONTROLES-SECURITE.md` contre le diff, puis une ligne par zone dans
-  `docs/securite/revues.md`. Le hook `garde-securite` refuse « fini » sans elle, dans les dépôts qui
+  la trace que nomme `docs/securite/zones.json` (une fiche par tranche dans `docs/securite/revues/`, ou
+  `revues.md`). Le hook `garde-securite` refuse « fini » sans elle, dans les dépôts qui
   portent `docs/securite/zones.json`. Pas d'agent de sécurité : `/security-review` seulement à la
   demande de Célian. Un écart se corrige ou s'écrit dans `docs/securite/MENACES.md`.
 
@@ -148,15 +160,17 @@ en cours de phase, sauf deux corrections ratées.
 
 ### 1 · Démarrer une session
 
-Le hook de début de session fait le `git pull --rebase` quand l'arbre est propre et signale ce qui bloque : ça se traite
+Le hook de début de session met le dossier à jour, même modifié (avance rapide, réglages JSON fusionnés clé par clé), et signale ce qui bloque : ça se traite
 avant tout. Puis : annoncer la machine et ce qu'elle peut exécuter · la commande rapide du
 `PROJET.md` qui passe · la to-do de la discussion. **Fini quand** l'objectif est écrit et que
 Célian sait où on en est en trois lignes. Une passation reprise part dans
 `docs/archives/handoffs/` (`git mv`) : `docs/` ne garde que celle qui attend sa reprise. Les PR en
 attente se traitent en début de session ; les autres passent d'abord par la fin de tranche. Celles des routines
 et de Dependabot se fusionnent sous la règle de fusion (Git). Auto-fix d'office sur chaque PR ; seules restent rouges, à
-Célian, celles des actions de la CI (ADR-0012), d'un test à modifier ou de sa décision. Un travail propre à l'autre machine devient un ticket au label `station` ou
-`mac`, avec sa passation, que la session de cette machine prend d'office.
+Célian, celles des actions de la CI (ADR-0012), d'un test à modifier ou de sa décision. Un travail propre à l'autre machine
+s'ajoute au **ticket unique de cette machine** (« Mac · à reprendre », label `mac` ; « Station · à reprendre », label
+`station`), jamais à un ticket neuf ; la session de cette machine le prend d'office et y coche ce qu'elle finit
+*(Célian, 14/10/2026)*.
 
 ### 2 · Un chantier complet
 
@@ -196,4 +210,4 @@ colonnes : testé réellement · seulement relu · invérifiable ici, et pourquo
 fichier. Un grep compte ce qu'il cherche, pas ce que ça veut dire. Une issue : `triage`, puis les
 labels du dépôt ; un ticket mesuré part en `implement`, un besoin flou en `grill-with-docs`.
 
-<!-- empreinte md5=231917872fc2 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=17afd121f166 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->

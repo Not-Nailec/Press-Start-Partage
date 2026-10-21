@@ -30,8 +30,29 @@ export const ENV_PROPRE = {
 // part sans contrôle (contrôle 26, « le doute refuse »). Dépassé, git lève une erreur ETIMEDOUT : le juge la refuse.
 export const DELAI_GIT = 15_000;
 let delaiCourant = () => DELAI_GIT;
-/** Le délai (ms) de l'appel `git <a>` : DELAI_GIT, sauf couture de test. */
-export const delaiDeGit = (a) => delaiCourant(a);
+// L'échéance commune à tous les git d'un contrôle (#301) : un crochet coupé à 20 s ne doit pas mourir de deux git lents à 15 s.
+// Passée, le git suivant lève sans être lancé, et le contrôle refuse (le doute refuse). Elle ne fait que se rapprocher.
+let echeance = Infinity;
+/**
+ * Ce que git répond quand il ne lit pas `dossier` (première ligne, en anglais forcé pour ne pas dépendre de la langue), ou
+ * null s'il le lit. Le code 128 vaut aussi pour une configuration illisible, un `.git` corrompu ou un propriétaire douteux
+ * (`safe.directory`) : seul « pas un dépôt » laisse passer, le reste refuse avec ce motif (#301).
+ */
+export function refusDeGit(dossier) {
+  let delai;
+  try { delai = delaiDeGit(['rev-parse', '--git-dir']); } catch { return "pas de réponse dans l'échéance du contrôle"; } // appelé dans un catch : ne lève pas
+  const r = spawnSync('git', ['-C', dossier, 'rev-parse', '--git-dir'], { encoding: 'utf8', env: { ...ENV_PROPRE, LC_ALL: 'C', LANGUAGE: 'C' }, timeout: delai });
+  return r.status === 0 ? null : ((r.stderr ?? '').split('\n').find(Boolean) ?? `code ${r.status}`).replace(/^fatal: /, '');
+}
+export const horsDepot = (dossier) => /not a git repository/i.test(refusDeGit(dossier) ?? '');
+
+export function echeanceGit(ms) { echeance = Math.min(echeance, Date.now() + ms); }
+/** Le délai (ms) de l'appel `git <a>` : DELAI_GIT, sauf couture de test, borné par l'échéance du contrôle. */
+export const delaiDeGit = (a) => {
+  const reste = echeance - Date.now();
+  if (reste <= 0) throw Object.assign(new Error('échéance du contrôle dépassée'), { code: 'ETIMEDOUT' });
+  return Math.max(1, Math.min(delaiCourant(a), reste));
+};
 /**
  * Couture de test : un délai plus court, pour prouver qu'un git qui bloque refuse sans attendre 15 s. `delai` : des ms, ou une
  * fonction des arguments de git qui rend des ms (ou undefined pour le délai normal). Jamais plus long que DELAI_GIT. Rend la
@@ -90,7 +111,9 @@ function trace(d, ...commits) {
  */
 function zonesSansTrace(d, base, tete, touchees) {
   const chemin = trace(d, base); // celle du départ de la tranche sur main, sinon le chemin par défaut : jamais celle de la tranche
-  const lignes = git(d, '-c', 'core.quotepath=false', 'diff', `${base}..${tete}`, '--', chemin).split('\n')
+  // Trace en dossier : son mode d'emploi n'est pas une fiche (même règle que garde-securite).
+  const fiches = chemin.endsWith('.md') ? [chemin] : [chemin, `:(exclude)${chemin.replace(/\/?$/, '/')}README.md`];
+  const lignes = git(d, '-c', 'core.quotepath=false', 'diff', `${base}..${tete}`, '--', ...fiches).split('\n')
     .filter((l) => l.startsWith('+') && !l.startsWith('+++')).map((l) => l.slice(1));
   return { chemin, manquantes: nomsSansLigne(touchees, lignes) };
 }
@@ -117,7 +140,19 @@ export function juger(d, base, tete = 'HEAD') {
   }
 }
 
+// Voie « notes seules » (Célian, 20/10/2026) : une tranche qui n'ajoute ou ne retouche que des notes `docs/recherche/*.md`
+// (une routine de recherche) n'a rien que la fin de tranche sache contrôler, et le cloud ne peut pas la lancer. Liste
+// fermée : des `.md`, jamais les pratiques votées (`workflow/lots.md`, qui priment sur les règles), ni suppression ni
+// renommage ; le filet garde son scan des secrets.
+const NOTE = /^docs\/recherche\/(?:[^/]+\/)*[^/]+\.md$/;
+const VOTES = 'docs/recherche/workflow/lots.md';
+function notesSeules(d, base, tete) {
+  const lignes = git(d, '-c', 'core.quotepath=false', 'diff', '--name-status', '--no-renames', base, tete).split('\n').filter(Boolean);
+  return lignes.length > 0 && lignes.every((l) => /^[AM]\t/.test(l) && NOTE.test(l.slice(2)) && l.slice(2) !== VOTES);
+}
+
 function jugerSansFilet(d, base, tete) {
+  if (notesSeules(d, base, tete)) return { accepte: true, manques: [], notes: true };
   const refus = (...m) => ({ accepte: false, manques: m });
   // Celui qui désigne un commit de la tranche, du plus récent au plus ancien : celui que la fin de tranche vient d'écrire ;
   // un procès-verbal d'une autre branche désigne un commit hors de la plage. Sur GitHub, la tête est détachée : le juge ne
@@ -270,7 +305,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       const [base, tete] = [args[k + 1], args[k + 2]];
       if (![base, tete].every((s) => /^[0-9a-f]{7,40}$/.test(s ?? ''))) throw new Error('--juger <base> <tête> : deux commits');
       const verdict = juger(dossier, git(dossier, 'merge-base', base, tete), tete);
-      if (verdict.accepte) { console.log('Procès-verbal complet : la tranche a été vérifiée en local.'); process.exit(0); }
+      if (verdict.accepte) { console.log(verdict.notes ? 'Notes de recherche seules : aucun contrôle de fin de tranche ne les concerne.' : 'Procès-verbal complet : la tranche a été vérifiée en local.'); process.exit(0); }
       console.error(`Procès-verbal incomplet (${DOSSIER}) :\n${verdict.manques.map((m) => `  · ${m}`).join('\n')}`);
       process.exit(1);
     } else if (args.includes('--modele')) {
@@ -308,4 +343,4 @@ function pvsDeLaTranche(d, base, tete) {
   return [...new Set([...recents.filter((f) => nets.has(f)), ...nets])];
 }
 
-// empreinte md5=20c3ea5f3dee — source Press-Start/outils/claude/hooks/proces-verbal.mjs, ne pas éditer ici
+// empreinte md5=316b566b5c08 — source Press-Start/outils/claude/hooks/proces-verbal.mjs, ne pas éditer ici
