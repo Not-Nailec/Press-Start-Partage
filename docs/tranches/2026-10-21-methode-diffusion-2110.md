@@ -1,6 +1,6 @@
 # Procès-verbal · methode/diffusion-2110
 
-**Dernier commit :** `07575c0b67394210a2b68fbc7dea0d30f9237caf`
+**Dernier commit :** `2f9ea68fdedddb9490efde51fda88abbf64d0527`
 
 ## Contrôles
 
@@ -21,7 +21,7 @@ Contrôles : 1,5 s en tout, 10 à la fois au plus.
 | sécurité mécanique | 0,1 s |
 | fichiers communs intacts | 0,2 s |
 | Dependabot couvre chaque dossier npm | 0,1 s |
-| relecture par Claude | 40,3 s |
+| relecture par Claude | 58,5 s |
 
 ## Coût
 
@@ -33,14 +33,28 @@ Modèle : opus
 
 ### Standards
 
-- **Trace de sécurité absente** (`CLAUDE.md`, Git : « Un lot sensible se relit sur sa sécurité […] puis une ligne par zone dans la trace que nomme `docs/securite/zones.json` »). La tranche modifie `.github/filet/proces-verbal.mjs`. Ce chemin appartient à la zone « intégration continue » (`docs/securite/zones.json:9`). Pourtant, le diff n'ajoute aucune ligne à `docs/securite/revues.md`, et `zonesSansTrace` refusera donc la tranche.
-- **Bug latent : l'échéance ne se remet jamais à zéro** (`proces-verbal.mjs`, `let echeance = Infinity` et `echeanceGit`). L'échéance est une variable du module et ne fait que diminuer (`Math.min`). Aucune fonction ne la réinitialise. Dès qu'un premier contrôle a fixé une échéance et qu'elle est dépassée, tous les appels `git(...)` suivants du même processus lèvent `ETIMEDOUT` sans même lancer git. Une suite de tests ou un enchaînement `--modele` puis `--juger` dans un même processus seraient alors refusés à tort. Dans ce dépôt, rien n'appelle encore `echeanceGit` (grep : aucune occurrence en dehors de sa définition). Le risque est donc latent ici, mais réel dans la source.
-- **La voie « notes seules » saute aussi le contrôle des zones** (`jugerSansFilet` : `if (notesSeules(...)) return { accepte: true … }`). Ce retour anticipé passe avant `zonesSansTrace`. Une zone déclarée par suffixe (`"*.md"`) ou sous `docs/recherche/` serait acceptée sans trace de revue. Cela contredit la règle de `CLAUDE.md` citée plus haut. Aucune zone de ce dépôt n'est concernée aujourd'hui.
-- **Code exporté mais inutilisé** : `refusDeGit`, `horsDepot` et `echeanceGit`. Personne ne les appelle dans `.github/filet/`. Comme le fichier est dérivé de la source Press-Start, je ne le compte pas comme une infraction ici.
+- **Bug latent : l'échéance ne se remet jamais à zéro** (`.github/filet/proces-verbal.mjs:35-55`). `echeance` est une variable globale du module, et `echeanceGit` ne peut que la rapprocher. Aucune fonction ne la remet à `Infinity`, alors que `delaiGitPourTest` rend bien de quoi revenir en arrière.
+  - Cas qui échoue : un même processus qui lance deux contrôles l'un après l'autre (les tests, ou un garde qui juge plusieurs PR). Une fois la première échéance passée, chaque appel `git` lève `ETIMEDOUT` sans être lancé, et tout est refusé.
+  - Dans ce dépôt, personne n'appelle `echeanceGit` : le défaut n'a pas d'effet ici, mais il existe dans la source de Press-Start.
+- **Bug : la voie « notes seules » passe avant le contrôle des zones de sécurité** (`proces-verbal.mjs:155`). `notesSeules` accepte la tranche avant `modeleExige` et `zonesSansTrace`.
+  - Cas qui échoue : un dépôt qui déclare une zone sur `docs/recherche/` ou en `*.md`. Une tranche qui ne touche que ces notes est acceptée sans ligne de revue de sécurité et sans relecture par opus. Cela contredit le principe écrit ligne 124 : « une tranche ne retire pas une zone pour s'en dispenser ».
+  - Sans effet ici : `zones.json` ne déclare rien de tel.
+- **Bug mineur : le motif de refus de git peut être faux** (`refusDeGit`, l. 45). Seule la première ligne de stderr est gardée.
+  - Cas qui échoue : un `warning:` affiché avant le `fatal: not a git repository`. `horsDepot` rend alors `false` et le contrôle refuse un dossier qui n'est simplement pas un dépôt.
+- **Ordre des commits de la tranche (règle « Chaque tranche validée part avec son procès-verbal », CLAUDE.md, section Git).** La revue de sécurité (`2f9ea68`) vient après le commit du procès-verbal (`3aac400`).
+  - Si le procès-verbal désigne un commit antérieur, le juge le déclare périmé (l. 180-193).
+  - Il ne trouve pas non plus la ligne de revue de la zone « intégration continue » : `zonesSansTrace` ne lit que `base..designe`, donc il signale la zone sans trace.
+  - Aucun fichier `docs/tranches/` n'est visible dans l'arbre de travail, je n'ai donc pas pu vérifier quel commit il désigne.
+- **Ligne de revue** (`docs/securite/revues.md`) : elle cite le contrôle 26. Dans `CONTROLES-SECURITE.md:64`, le 26 vise « sans SHA-256 ni signature » pour les types B et W, pas le refus en cas de doute de git. Le numéro ne correspond pas au contrôle réellement relu.
 
 ### Spec
 
-Aucune spec trouvée : le ticket #458 est cité par le commit, mais il est illisible (gh absent ou ticket introuvable). Je n'ai donc rien pu comparer. Pour information, le diff contient plus que le sujet annoncé par le commit (« revues de sécurité en fiches ») :
-- l'échéance commune des appels git (#301) ;
-- la voie « notes seules » (décision du 20/10/2026) ;
-- plusieurs règles de `CLAUDE.md` du 14/10/2026.
+Le ticket cité (Press-Start #458) est illisible : `gh` est absent ou le ticket introuvable. Je ne peux donc rien vérifier contre la spec.
+
+Hors du sujet annoncé par le message `07575c0` (« revues de sécurité en fiches »), le diff apporte aussi :
+- l'échéance commune aux `git` (#301, qui n'est pas cité) ;
+- le refus motivé de git (`refusDeGit` / `horsDepot`, #301) ;
+- la voie « notes seules » (décision de Célian du 20/10, sans ticket) ;
+- dans `CLAUDE.md`, les règles du 14/10 (« Ce que je trouve se corrige », « Les outils aussi », ticket unique par machine).
+
+Ces ajouts arrivent par la diffusion du commit `40d7b7b`, qui ne cite aucun ticket.
