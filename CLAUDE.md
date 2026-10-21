@@ -137,7 +137,8 @@ fusionnées par elles.
 - **Un lot sensible se relit sur sa sécurité, dans la discussion, avant d'être poussé** (élévation,
   mise à jour, réseau, données envoyées ou reçues, secrets, pilotes, authentification) : les
   contrôles « Revue » de `CONTROLES-SECURITE.md` contre le diff, puis une ligne par zone dans
-  `docs/securite/revues.md`. Le hook `garde-securite` refuse « fini » sans elle, dans les dépôts qui
+  la trace que nomme `docs/securite/zones.json` (une fiche par tranche dans `docs/securite/revues/`, ou
+  `revues.md`). Le hook `garde-securite` refuse « fini » sans elle, dans les dépôts qui
   portent `docs/securite/zones.json`. Pas d'agent de sécurité : `/security-review` seulement à la
   demande de Célian. Un écart se corrige ou s'écrit dans `docs/securite/MENACES.md`.
 
@@ -159,7 +160,7 @@ en cours de phase, sauf deux corrections ratées.
 
 ### 1 · Démarrer une session
 
-Le hook de début de session fait le `git pull --rebase` quand l'arbre est propre et signale ce qui bloque : ça se traite
+Le hook de début de session met le dossier à jour, même modifié (avance rapide, réglages JSON fusionnés clé par clé), et signale ce qui bloque : ça se traite
 avant tout. Puis : annoncer la machine et ce qu'elle peut exécuter · la commande rapide du
 `PROJET.md` qui passe · la to-do de la discussion. **Fini quand** l'objectif est écrit et que
 Célian sait où on en est en trois lignes. Une passation reprise part dans
@@ -209,4 +210,4 @@ colonnes : testé réellement · seulement relu · invérifiable ici, et pourquo
 fichier. Un grep compte ce qu'il cherche, pas ce que ça veut dire. Une issue : `triage`, puis les
 labels du dépôt ; un ticket mesuré part en `implement`, un besoin flou en `grill-with-docs`.
 
-<!-- empreinte md5=e880a8dd10cf — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=17afd121f166 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->

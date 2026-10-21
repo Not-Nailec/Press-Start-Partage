@@ -111,7 +111,9 @@ function trace(d, ...commits) {
  */
 function zonesSansTrace(d, base, tete, touchees) {
   const chemin = trace(d, base); // celle du départ de la tranche sur main, sinon le chemin par défaut : jamais celle de la tranche
-  const lignes = git(d, '-c', 'core.quotepath=false', 'diff', `${base}..${tete}`, '--', chemin).split('\n')
+  // Trace en dossier : son mode d'emploi n'est pas une fiche (même règle que garde-securite).
+  const fiches = chemin.endsWith('.md') ? [chemin] : [chemin, `:(exclude)${chemin.replace(/\/?$/, '/')}README.md`];
+  const lignes = git(d, '-c', 'core.quotepath=false', 'diff', `${base}..${tete}`, '--', ...fiches).split('\n')
     .filter((l) => l.startsWith('+') && !l.startsWith('+++')).map((l) => l.slice(1));
   return { chemin, manquantes: nomsSansLigne(touchees, lignes) };
 }
@@ -341,4 +343,4 @@ function pvsDeLaTranche(d, base, tete) {
   return [...new Set([...recents.filter((f) => nets.has(f)), ...nets])];
 }
 
-// empreinte md5=d045b4841cb8 — source Press-Start/outils/claude/hooks/proces-verbal.mjs, ne pas éditer ici
+// empreinte md5=316b566b5c08 — source Press-Start/outils/claude/hooks/proces-verbal.mjs, ne pas éditer ici
