@@ -16,13 +16,26 @@ hors du dépôt, je les lis d'abord.
 
 ## Les agents
 
+**Sur la station, deux sessions au plus** *(Célian, 02/11/2026, remplace les onglets pilotés par
+messages)* : la **session maître** (Opus avec Fable en conseiller, `/advisor`, consulté avant chaque lot
+et avant « fini » ; *Célian, 15/11/2026, remplace « Fable, qui orchestre seulement »*) et la **session avec Célian** (Opus :
+tests, relevés, bugs, planches ; prioritaire sur la machine). La maître ne pilote pas d'onglets : elle
+découpe le travail en lots délimités, plan compris, lance des sous-agents (`opus` concevoir et relire,
+`sonnet` exécuter), récupère leur travail directement, relit sur le diff **avant** tout contrôle, et
+regroupe les lots relus dans une branche d'ensemble : une seule fin de tranche, une seule PR. Elle
+surveille à heure fixe (toutes les dix minutes : verrou, PR, dernier message) et arrête elle-même ce qui
+échoue deux fois sur le même contrôle. Un changement de l'outil de contrôle s'éprouve sur trois passages
+complets avant que le reste en dépende. Pourquoi : le 02/11, quatre onglets qui s'attendaient par
+messages ont fusionné quatre lots le matin puis plus rien en trois heures.
+
 **Je lance un agent sans demander quand la tâche se découpe** en morceaux indépendants, ou que
 c'est une lecture bruyante à isoler ; un travail qui s'écrit pas à pas reste dans la discussion
 *(Célian, 07/10/2026, remplace « un agent se demande, toujours »)*. Le contrôle `garde-agents`
 refuse ce qui manque : `Mission :` et `Fini quand :` en tête, un modèle de la grille (que je choisis
 selon la tâche : `haiku` chercher, `sonnet` exécuter, `opus` concevoir et relire ; Fable pour un plan
-ou une orchestration seulement), sa propre copie s'il écrit, 3 en même temps et 6 par discussion.
-Au-delà, sa fenêtre d'autorisation pose la question à Célian (seule exception à `AskUserQuestion`).
+ou une orchestration seulement), sa propre copie s'il écrit, 6 en même temps : un septième est refusé et
+j'attends une place, sans jamais poser la question à Célian ; aucun plafond par discussion *(Célian,
+17/11/2026, remplace « 3 en même temps » du 03/11)*.
 Lancés ensemble, les agents voient le même compte : pas plus que de places libres ; un agent de plus
 de deux heures sort du compte. Chaque agent s'annonce à Célian en une ligne (mission, modèle). Les
 routines cloud validées à leur création (Âge des tickets, Ménage, Recherche du soir, Journal de
@@ -47,9 +60,27 @@ fusionnées par elles.
 ## Comment on se parle
 
 - **Un long rendu se met dans un fichier ou un artefact**, jamais dans le chat.
-- **Les questions passent par `AskUserQuestion`**, sauf celle du plafond des agents, y compris dans un skill qui
+- **Les questions passent par `AskUserQuestion`**, y compris dans un skill qui
   pose les siennes en texte. Un arbitrage par question, la recommandation en premier, marquée
   « (Recommandé) ». Au-delà de quatre : plusieurs appels d'affilée, aucune sacrifiée.
+- **Une question de chantier ne se pose pas en boutons** *(Célian, 20/11/2026)*. Elle passe par
+  `grilling` puis spec (`/grill-me` puis `/to-spec`, lancés par Célian) dès qu'elle remplit un de ces points :
+  1. elle ouvre ou élargit un chantier (nouvelle fonction, plusieurs tranches, périmètre ajouté à l'ensemble en cours) ;
+  2. elle revient sur une décision écrite (ADR, spec, décision de Célian) ;
+  3. elle touche la sécurité, les données personnelles, la vente ou la licence, ou elle est difficile à défaire ;
+  4. elle engage la direction du produit (ce que fait Press Start, pour qui, dans quelle langue) ;
+  5. elle demande plus d'une ligne de contexte ou plus de trois sous-questions liées ;
+  6. elle porte sur un écran ou une fonction qui n'existe pas encore.
+
+  L'agent ne la pose alors pas : il continue le reste et l'écrit « à griller » sur son item ou dans son
+  rapport. Seules les petites questions qui bloquent passent en boutons : choisir dans un périmètre déjà
+  décidé (une lettre de planche, un texte, l'application d'une décision existante, un constat du filet).
+  Exemples de questions qui auraient dû être « à griller » :
+  - lever l'ADR-0008 (point 2) ;
+  - les raccourcis clavier : la réponse a dessiné une vision produit, un seul Ctrl+K pour l'IA locale (point 4) ;
+  - monter la page de recherche dans l'ensemble 9 (point 1) ;
+  - la Langue anglais, environ 10 lots (points 1, 4, 5) ;
+  - l'écran Sauvegarde alors que le moteur Backup Lab n'existe pas (point 6).
 - **Une question sur une planche reprend les marques de la planche** (section, lettre, numéro).
 - **Les réserves se disent à Célian, jamais à l'écran de l'outil.**
 - **Pas de oui par complaisance.** Avant d'exécuter une proposition de Célian : l'objection la
@@ -71,8 +102,11 @@ fusionnées par elles.
   `/clear`), et Célian tranche. Un seul gros changement en relecture à la fois : rien ne s'empile dessus.
 - **Un résultat se constate, il ne se simule pas.** Ce qui n'a pas tourné se dit « écrit, non
   exécuté » ; un contrôle « non exécuté » n'est pas un succès. Une machine qui ne peut pas exécuter le
-  dit avant qu'on propose un outil : l'environnement cloud Linux n'exécute rien de nos outils installés
-  (skills qui pilotent un navigateur, l'app, Ghostscript…) ; seuls node, git et uv y tournent.
+  dit avant qu'on propose un outil : l'environnement cloud Linux fait tourner la fin de tranche entière
+  et les tests (`outils/installer-cloud.mjs`, posé par le script de démarrage de l'environnement : Node 24,
+  gitleaks, oxlint, ruff, Chromium, les dépendances de l'interface) *(Célian, 01/11/2026, remplace
+  « seuls node, git et uv y tournent »)* ; il n'a ni ImageMagick, ni Ghostscript, ni D2 (des skills, pas des
+  contrôles), et ne lance ni l'app, ni les capteurs, ni la compilation, ni ce qui demande Windows.
 - **Ce qui se mesure ne se déduit pas.** Un ratio, un compte, l'effet d'une cascade CSS se
   mesurent dans les conditions réelles.
 - **Un bug est corrigé quand on sait pourquoi il existait** et que quelque chose l'empêche de
@@ -87,6 +121,8 @@ fusionnées par elles.
 - **En compactant, garder** : l'objectif de la discussion et son ticket ; les fichiers modifiés
   et non committés ; la commande de test du `PROJET.md` et son dernier résultat ; les décisions
   de Célian prises dans la discussion.
+- **Quatre compactions au plus par session** *(Célian, 19/11/2026)* : au-delà, `handoff` et session
+  neuve.
 - **Git et `docs/ETAT.md` font foi.** La mémoire auto est un cache : quand elle contredit le
   dépôt, c'est le dépôt qui a raison, et la mémoire se corrige.
 
@@ -133,6 +169,7 @@ fusionnées par elles.
   sauf si c'est le but (label `règles`), `code-review` passé, « fini quand » constaté. `garde-fusion` le
   vérifie (procès-verbal, CI verte, suite aux bugs, « Fini quand ») ; filet touché : Célian fusionne.
   Il refuse toute commande qui cite la sous-commande de fusion : un texte qui la cite s'écrit par fichier.
+  Une PR d'un autre dépôt se fusionne librement, sauf `ldlc-work`, jugé sous ces mêmes règles *(Célian, 21/10/2026)*.
 - **Un `main` cassé s'annule** par `git revert` du commit fautif, puis on corrige à froid.
 - **Un lot sensible se relit sur sa sécurité, dans la discussion, avant d'être poussé** (élévation,
   mise à jour, réseau, données envoyées ou reçues, secrets, pilotes, authentification) : les
@@ -210,4 +247,4 @@ colonnes : testé réellement · seulement relu · invérifiable ici, et pourquo
 fichier. Un grep compte ce qu'il cherche, pas ce que ça veut dire. Une issue : `triage`, puis les
 labels du dépôt ; un ticket mesuré part en `implement`, un besoin flou en `grill-with-docs`.
 
-<!-- empreinte md5=17afd121f166 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
+<!-- empreinte md5=0c9d4913f3a4 — source Press-Start/outils/claude/methode/CLAUDE.md, ne pas éditer ici -->
