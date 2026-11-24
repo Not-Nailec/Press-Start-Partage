@@ -15,15 +15,26 @@ d'écrire, de modifier ou de relire une interface.
 
 ### Un écran, une retouche
 
-`impeccable shape` → **l'artefact commentable sur claude.ai** : Célian commente dessus, les
+**La chaîne légère d'Impeccable, sans agent** *(Célian, 02/11/2026)* : `context.mjs` une fois par
+session ; `impeccable shape` (le brief et ses six états : vide, chargement, erreur, donnée absente,
+très long, hors ligne, que la maquette montre tous) ; le contrat de direction en six lignes dans la fiche
+de l'écran (`.impeccable/surfaces/<écran>.md`) ; `craft-floor.md` lu juste avant de dessiner, le
+détecteur branché ; → **l'artefact commentable sur claude.ai** : Célian commente dessus, les
 commentaires arrivent en direct, on peaufine, il valide. Ensuite seulement le code, en copiant un
-écran voisin déjà validé. Puis `audit`, `polish`, `/qa`. L'artefact s'ouvre sur sa critique
-cadrée, au-dessus de la maquette et jamais dedans : ce qu'il faut trancher, et ce sur quoi on ne
-demande pas d'avis. Le brief de `shape` cartographie six états (vide, chargement, erreur, donnée
-absente, très long, hors ligne), et la maquette les montre tous. Après le code, avant l'artefact final, les agents-testeurs font
-le parcours, un par profil (technicien, client novice, joueur), et rapportent où ils bloquent. Ils
-passent par la règle des agents : Mission, Fini quand, `sonnet` (ils exécutent un parcours), copie à part.
+écran voisin déjà validé. Puis `audit`, `polish`, `/qa`. Jamais : relecture finale par un agent,
+critique à deux agents, images générées, tour de correction automatique, agents-testeurs ; nos tests
+font ce travail. L'artefact s'ouvre sur sa critique cadrée, au-dessus de la maquette et jamais dedans :
+ce qu'il faut trancher, et ce sur quoi on ne demande pas d'avis.
 **Fini quand** axe-core est propre, la console vide, et Célian a validé le rendu.
+
+**Une planche d'un écran de Press Start monte les vrais composants, jamais une imitation** *(Célian,
+02/11/2026)* : `app/web/src/maquette-<écran>.tsx` importe les composants `@ds` tels quels, part de la
+forme du gabarit voisin (`*.gen.tsx`), jamais d'une page vierge (« repartir de zéro » vise la
+structure, pas les composants), et `node outils/artefact.mjs <sortie> "<titre>" maquette-<écran>.html`
+l'assemble en un seul fichier ; le CSS de la page de revue reste hors de la scène. Pourquoi : nos
+contrôles jugent la qualité générale d'une page, jamais sa fidélité au design system ; une imitation en
+HTML passait « 0 défaut » avec un spinner au lieu des orbes d'Attente et une erreur en texte rouge au
+lieu d'ErreurEnLigne. Rien n'est redessiné, donc rien ne dévie : seule la disposition reste à juger.
 
 **Un artefact est la page réelle, pas une image d'elle.** Célian doit pouvoir cliquer, taper,
 parcourir — une planche de captures ne montre qu'un état, jamais un comportement. Quand la page
@@ -90,4 +101,4 @@ carte de décision. Ensuite le code, source et bundle ensemble. `document` rég�
 - **Avant livraison d'un écran** : axe-core sans violation sérieuse, contraste ≥ 4,5:1 sous 18 px,
   clavier complet, console vide, aucun défilement horizontal, relecture anti-slop et ton.
 
-<!-- empreinte md5=57f75e6092bb — source Press-Start/outils/claude/methode/CLAUDE-INTERFACE.md, ne pas éditer ici -->
+<!-- empreinte md5=9d6ffb2004f2 — source Press-Start/outils/claude/methode/CLAUDE-INTERFACE.md, ne pas éditer ici -->

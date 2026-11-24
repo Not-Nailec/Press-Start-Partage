@@ -15,6 +15,13 @@ import { nomsSansLigne } from './zone-revue.mjs';
 export const DOSSIER = 'docs/tranches/';
 export const DECLARATION = 'tranche.json';
 
+// Un contrôle de fin qui borne ses chemins (`si`) est sauté quand la tranche n'en touche aucun (Célian, 23/10/2026) ;
+// la règle se calcule sur les fichiers, jamais sur la parole de l'agent. Toucher aux règles du saut fait tout tourner.
+export const SAUTE = 'sauté (chemins non touchés)';
+const REGLES_DU_SAUT = [DECLARATION, 'outils/claude/hooks/tranche.mjs', 'outils/claude/hooks/proces-verbal.mjs'];
+// Seule une liste non vide borne un contrôle : `[]` le sauterait toujours, une chaîne ferait lever le juge.
+export const sautable = (c, fichiers) => Array.isArray(c.si) && c.si.length > 0 && !fichiers.some((f) => REGLES_DU_SAUT.includes(f) || c.si.some((p) => f.startsWith(p)));
+
 // Sans les GIT_* hérités : lancé depuis un hook git, GIT_DIR ferait viser à `git -C` le dépôt du hook (04/10).
 // Sans NODE_TEST_CONTEXT non plus : un contrôle `node --test` lancé depuis un test rendrait ses résultats au parent
 // et sortirait à 0, même rouge (constaté sur le test de #222). PS_SOUS_TEST le remplace : l'enfant se sait encore sous test.
@@ -193,15 +200,23 @@ function jugerSansFilet(d, base, tete) {
   }
 
   // Les contrôles : ceux que déclarent main et le commit désigné, réunis (la tranche en ajoute, elle n'en retire
-  // pas), chacun « réussi » une seule fois dans le tableau de la section « Contrôles ».
+  // que par `retires`, ci-dessous), chacun « réussi » une seule fois dans le tableau de la section « Contrôles ».
   const aBase = declares(d, base), aDesigne = declares(d, designe);
   if (!aBase && !aDesigne) return refus(...manques, `le dépôt ne déclare pas ses contrôles de fin de tranche (${DECLARATION} absent ou illisible)`);
   const tableau = texte.split(/^## Contrôles[ \t]*$/m)[1]?.split(/^## /m)[0] ?? '';
   const lignes = [...tableau.matchAll(/^\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*$/gm)];
-  for (const nom of new Set([...(aBase ?? []), ...(aDesigne ?? [])])) {
+  // Seule exception (Célian, 23/10/2026) : un contrôle de main qu'un commit de la tranche retire nommément, en tête
+  // de ligne : « Retrait du contrôle « X » : décision de Célian … ». Lu dans la tranche seule, rien ne reste dans main
+  // pour couvrir un retrait futur ; la PR touche tranche.json, et garde-fusion la laisse à Célian.
+  const retires = new Set([...git(d, 'log', '--format=%B', `${base}..${designe}`)
+    .matchAll(/^Retrait du contrôle « ([^»\n]+) » : décision de Célian\b/gm)].map((m) => m[1]));
+  // Un « sauté » ne compte que si le juge, sur la déclaration de main et les fichiers de la tranche, le trouve sautable.
+  const sautes = new Set((lireJson(d, base, DECLARATION)?.fin ?? []).filter((c) => sautable(c, [...dansLaTranche])).map((c) => c.nom));
+  // Déclaration illisible dans la tranche : on ne sait pas si le contrôle est parti, aucune exemption.
+  for (const nom of new Set([...(aBase ?? []).filter((n) => !(aDesigne && retires.has(n))), ...(aDesigne ?? [])])) {
     const siens = lignes.filter((m) => m[1] === nom).map((m) => m[2]);
     if (siens.length > 1) manques.push(`contrôle « ${nom} » : écrit deux fois`);
-    else if (siens[0] !== 'réussi') manques.push(`contrôle « ${nom} » : ${siens[0] ?? 'absent du procès-verbal'}`);
+    else if (siens[0] !== 'réussi' && !(siens[0] === SAUTE && sautes.has(nom))) manques.push(`contrôle « ${nom} » : ${siens[0] ?? 'absent du procès-verbal'}`);
   }
 
   // La trace de revue de sécurité : une ligne par zone touchée, ajoutée dans la tranche.
@@ -274,14 +289,15 @@ export function cheminDuPv(d, base) {
  * Range le rapport de relecture (sections « ## Standards » et « ## Spec ») dans la section « Relecture » du procès-verbal,
  * en remplaçant la précédente. Refuse un modèle plus faible que celui qu'exige la tranche. Rend le chemin écrit.
  */
-export function rangerRelecture(d, rapport, par) {
+// `chemin` : celui que la fin de tranche a déjà écrit ; recalculé, il suivait un main avancé entre-temps par une autre session.
+export function rangerRelecture(d, rapport, par, chemin) {
   const base = depart(d);
   if (!base) throw new Error('branche principale du distant introuvable : lance `git fetch`');
   const exige = modeleExige(d, base);
   if (exige.modele === 'opus' && par !== 'opus') throw new Error(`la tranche touche une zone de sécurité (${exige.zones.join(', ')}) : la relecture doit être faite par opus`);
   const corps = rapport.replace(/\r\n/g, '\n').replace(/^#{1,2} /gm, '### ').trim(); // aucun titre du rapport ne sort de la section
   const section = `## Relecture\n\nModèle : ${par}\n\n${corps}\n`;
-  const chemin = cheminDuPv(d, base);
+  chemin ??= cheminDuPv(d, base);
   const fichier = join(d, chemin);
   const ancien = existsSync(fichier) ? readFileSync(fichier, 'utf8').replace(/\r\n/g, '\n') : `# Procès-verbal · ${git(d, 'rev-parse', '--abbrev-ref', 'HEAD')}\n`;
   const [avant, reste = ''] = ancien.split(/^## Relecture[ \t]*$/m);
@@ -343,4 +359,4 @@ function pvsDeLaTranche(d, base, tete) {
   return [...new Set([...recents.filter((f) => nets.has(f)), ...nets])];
 }
 
-// empreinte md5=316b566b5c08 — source Press-Start/outils/claude/hooks/proces-verbal.mjs, ne pas éditer ici
+// empreinte md5=6acbbbba5995 — source Press-Start/outils/claude/hooks/proces-verbal.mjs, ne pas éditer ici
